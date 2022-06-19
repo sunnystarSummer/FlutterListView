@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_list_view/setting_config.dart';
 
-import 'list_view/example.dart';
+import 'list_view/example_list.dart';
 
 void main() {
   runApp(const MyApp());

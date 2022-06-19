@@ -6,7 +6,7 @@ class ExampleData {
   String label = 'default';
 }
 
-class ExampleViewHolder<ExampleData> extends ViewHolder {
+class ExampleViewHolder<ExampleData> extends AbsViewHolder {
   late Text label;
   late ElevatedButton button;
 
@@ -29,7 +29,7 @@ class ExampleViewHolder<ExampleData> extends ViewHolder {
   }
 }
 
-class ExampleListViewFactory extends ListViewFactory<ExampleViewHolder, ExampleData> {
+class ExampleListViewFactory extends AbsListViewFactory<ExampleViewHolder, ExampleData> {
   late Function callSetState;
 
   @override

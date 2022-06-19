@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 //ViewHolder
-abstract class ViewHolder {
+abstract class AbsViewHolder {
   Widget get layout;
 
   Widget slideInLeft(Animation<double> animation) {
@@ -26,7 +26,7 @@ abstract class ViewHolder {
 }
 
 //Factory
-abstract class ListViewFactory<VH extends ViewHolder, D> {
+abstract class AbsListViewFactory<VH extends AbsViewHolder, D> {
   bool isAnim = false;
 
   List<D> dataList = [];
