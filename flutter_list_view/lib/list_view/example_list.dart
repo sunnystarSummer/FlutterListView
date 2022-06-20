@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'base.dart';
 
 class ExampleData {
@@ -30,7 +29,6 @@ class ExampleViewHolder<ExampleData> extends AbsViewHolder {
 }
 
 class ExampleListViewFactory extends AbsListViewFactory<ExampleViewHolder, ExampleData> {
-  late Function callSetState;
 
   @override
   void setOnBindViewHolder(
@@ -45,7 +43,4 @@ class ExampleListViewFactory extends AbsListViewFactory<ExampleViewHolder, Examp
   @override
   dynamic createViewHolder() => ExampleViewHolder();
 
-  void setState(onPressed) {
-    callSetState = onPressed;
-  }
 }
