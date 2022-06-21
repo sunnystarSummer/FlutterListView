@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
-import 'base.dart';
+import 'package:flutter/services.dart';
+import 'factory.dart';
 
 void main() {
   runApp(const MyApp());
@@ -52,21 +52,61 @@ class ExamplePageViewFactory extends AbsPageViewFactory {
       Page01(),
       Page02(),
       Page03(),
+      Page04(),
     ];
   }
 }
 
 class Page01 extends AbsPage {
   @override
-  String get title => 'First Page';
+  String get title => '螢幕固定直向(0)';
+
+  @override
+  Function? get onPageChanged => () {
+        //螢幕固定直向
+        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+      };
 }
 
 class Page02 extends AbsPage {
   @override
-  String get title => 'Second Page';
+  String get title => '螢幕固定直向(180)';
+
+  @override
+  Function? get onPageChanged => () {
+        //螢幕固定直向
+        SystemChrome.setPreferredOrientations([
+          DeviceOrientation.portraitDown,
+        ]);
+      };
 }
 
 class Page03 extends AbsPage {
   @override
-  String get title => 'Third Page';
+  String get title => '螢幕任意翻轉';
+
+  @override
+  Function? get onPageChanged => () {
+        //螢幕固定直向
+        SystemChrome.setPreferredOrientations([
+          DeviceOrientation.portraitUp,
+          DeviceOrientation.portraitDown,
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight,
+        ]);
+      };
+}
+
+class Page04 extends AbsPage {
+  @override
+  String get title => '螢幕左右橫向';
+
+  @override
+  Function? get onPageChanged => () {
+        //螢幕固定直向
+        SystemChrome.setPreferredOrientations([
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight,
+        ]);
+      };
 }

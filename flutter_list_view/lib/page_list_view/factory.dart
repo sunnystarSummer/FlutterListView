@@ -14,6 +14,9 @@ mixin IPage {
 }
 
 abstract class AbsPage with IBaseUI, IPage {
+
+  Function? onPageChanged;
+
   //取得頁面標題TextView
   Text get textViewPageTitle => Text(title);
 
@@ -30,6 +33,12 @@ abstract class AbsPageViewFactory<P extends AbsPage>
   int currentPage = 0;
 
   Text get textViewPageTitle => Text(getPageTitle());
+
+
+  AbsPageViewFactory(){
+    P page = indexPage(currentPage);
+    page.onPageChanged?.call();
+  }
 
   String getPageTitle() {
     int index = currentPage;
@@ -55,24 +64,6 @@ abstract class AbsPageViewFactory<P extends AbsPage>
     return pages[index];
   }
 
-  // @override
-  // // TODO: implement layout
-  // Widget get layout => Scaffold(
-  //       appBar: AppBar(title: textViewPageTitle),
-  //       body: PageView(
-  //         /// [PageView.scrollDirection] defaults to [Axis.horizontal].
-  //         /// Use [Axis.vertical] to scroll vertically.
-  //         controller: controller,
-  //         onPageChanged: (index) {
-  //           if (currentPage != index) {
-  //             currentPage = index;
-  //             callSetState.call();
-  //           }
-  //         },
-  //         children: getPageLayout(),
-  //       ),
-  //     );
-
   @override
   // TODO: implement layout
   Widget get layout => PageView(
@@ -82,7 +73,9 @@ abstract class AbsPageViewFactory<P extends AbsPage>
     onPageChanged: (index) {
       if (currentPage != index) {
         currentPage = index;
-        callSetState.call();
+        callSetState?.call();
+        P page = indexPage(index);
+        page.onPageChanged?.call();
       }
     },
     children: getPageLayout(),

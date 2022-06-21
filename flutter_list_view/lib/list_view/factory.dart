@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_list_view/base/base.dart';
 
 //ViewHolder
-abstract class AbsViewHolder with IBaseUI{
-
+abstract class AbsViewHolder with IBaseUI {
   Widget slideInLeft(Animation<double> animation) {
     return SlideTransition(
       position: Tween<Offset>(
@@ -26,10 +25,9 @@ abstract class AbsViewHolder with IBaseUI{
 }
 
 //Factory
-abstract class AbsListViewFactory<VH extends AbsViewHolder, D> with IBaseFactory{
+abstract class AbsListViewFactory<VH extends AbsViewHolder, D>
+    extends AbsListFactory<D> with IBaseFactory {
   bool isAnim = false;
-
-  List<D> dataList = [];
 
   // The key of the list
   GlobalKey<AnimatedListState> keyList = GlobalKey();
@@ -37,14 +35,6 @@ abstract class AbsListViewFactory<VH extends AbsViewHolder, D> with IBaseFactory
   //清單滑動當前位置
   double currentPosition = 0;
   ScrollController scrollController = ScrollController();
-
-  // ListViewFactory(){
-  //
-  // }
-
-  void setList(List<D> list) {
-    dataList = list;
-  }
 
   void addItem(D data) {
     int last = dataList.length;
@@ -70,7 +60,7 @@ abstract class AbsListViewFactory<VH extends AbsViewHolder, D> with IBaseFactory
   }
 
   //產生ViewHolder
-  dynamic createViewHolder();
+  VH createViewHolder();
 
   void setOnBindViewHolder(VH viewHolder, int position, D data);
 

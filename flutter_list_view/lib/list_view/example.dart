@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'base.dart';
+import 'factory.dart';
 
 class ExampleData {
   String label = 'default';
 }
 
-class ExampleViewHolder<ExampleData> extends AbsViewHolder {
+class ExampleViewHolder extends AbsViewHolder {
   late Text label;
   late ElevatedButton button;
 
@@ -36,11 +36,11 @@ class ExampleListViewFactory extends AbsListViewFactory<ExampleViewHolder, Examp
     viewHolder.setLabelInfo(data.label);
     viewHolder.setDeleteListener(() {
       removeItem(position);
-      callSetState.call();
+      callSetState?.call();
     });
   }
 
   @override
-  dynamic createViewHolder() => ExampleViewHolder();
+  ExampleViewHolder createViewHolder() => ExampleViewHolder();
 
 }
