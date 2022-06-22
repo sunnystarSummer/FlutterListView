@@ -1,29 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_list_view/base/base.dart';
 
-//ViewHolder
-abstract class AbsViewHolder with IBaseUI {
-  Widget slideInLeft(Animation<double> animation) {
-    return SlideTransition(
-      position: Tween<Offset>(
-        begin: const Offset(-1, 0),
-        end: const Offset(0, 0),
-      ).animate(animation),
-      child: layout,
-    );
-  }
-
-  Widget slideOutRight(Animation<double> animation) {
-    return SlideTransition(
-      position: Tween<Offset>(
-        begin: const Offset(1, 0),
-        end: const Offset(0, 0),
-      ).animate(animation),
-      child: layout,
-    );
-  }
-}
-
 //Factory
 abstract class AbsListViewFactory<VH extends AbsViewHolder, D>
     extends AbsListFactory<D> {

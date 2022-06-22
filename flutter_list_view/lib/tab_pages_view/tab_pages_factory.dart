@@ -1,36 +1,65 @@
 import 'package:flutter/material.dart';
+import '../base/base.dart';
 import '../pages_view/pages_factory.dart';
 
 abstract class AbsTabPageViewFactory<P extends AbsPage>
     extends AbsPageViewFactory<P> {
+  late TabController tabController;
 
+  build({required TickerProvider vsync}){
 
-  AbsTabPageViewFactory({required super.callSetState});
-
-  Widget getDefaultTabController(context,vsync) {
-    TabController tabController = TabController(
+    tabController = TabController(
       vsync: vsync,
       length: createPages().length,
       initialIndex: currentPage,
     );
 
-    tabController.animateTo(currentPage);
+    P page = indexPage(currentPage);
+    page.onPageChanged?.call();
+
+    //tabController.animateTo(currentPage);
+
+    tabController.addListener(() {
+      currentPage = tabController.index;
+      P page = indexPage(currentPage);
+      page.onPageChanged?.call();
+      callSetState.call();
+      if (tabController.indexIsChanging) {
+        //P page = indexPage(currentPage);
+        //page.onPageChanged?.call();
+        // tabController.animateTo(currentPage,
+        //     duration: const Duration(milliseconds: 200));
+        //callSetState.call();
+      }
+    });
+  }
+
+  AbsTabPageViewFactory({
+    required super.callSetState,
+  }) {
+
+
+
+  }
+
+  Widget getDefaultTabController(context,title) {
+    var color = Theme.of(context).primaryColor;
 
     return DefaultTabController(
       length: createPages().length,
       child: Scaffold(
         appBar: AppBar(
-          title: textViewPageTitle,
+          title: textViewPageTitle,//Text(title),
           automaticallyImplyLeading: false,
-          backgroundColor: Theme.of(context).primaryColor, //Color(0xff5808e5),
+          backgroundColor: color, //Color(0xff5808e5),
           bottom: getTabLayout(tabController),
         ),
-        body: layout,
+        body: getLayout(tabController),
       ),
     );
   }
 
-  TabBar getTabLayout(tabController) {
+  TabBar getTabLayout(TabController tabController) {
     //https://material.io/components/tabs/flutter#fixed-tabs
 
     List<Tab> tabs = [];
@@ -46,6 +75,9 @@ abstract class AbsTabPageViewFactory<P extends AbsPage>
       isScrollable: true,
       indicatorColor: Colors.white,
       tabs: tabs,
+      // onTap: (index) {
+      //   currentPage = index;
+      // },
     );
   }
 
@@ -57,4 +89,20 @@ abstract class AbsTabPageViewFactory<P extends AbsPage>
       children: getPageLayout(),
     );
   }
+
+// @override
+// Widget get layout => TabBarView(
+//   /// [PageView.scrollDirection] defaults to [Axis.horizontal].
+//   /// Use [Axis.vertical] to scroll vertically.
+//   controller: tabController,
+//   // onPageChanged: (index) {
+//   //   if (currentPage != index) {
+//   //     currentPage = index;
+//   //     callSetState.call();
+//   //     P page = indexPage(index);
+//   //     page.onPageChanged?.call();
+//   //   }
+//   // },
+//   children: getPageLayout(),
+// );
 }

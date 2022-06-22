@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../pages_view/pages_factory.dart';
+import 'package:flutter_list_view/tab_pages_view/tab_pages_factory.dart';
+import '../base/base.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,27 +24,34 @@ class MyPageList extends StatefulWidget {
   State<MyPageList> createState() => _MyPageListState();
 }
 
-class _MyPageListState extends State<MyPageList> {
+class _MyPageListState extends State<MyPageList> with TickerProviderStateMixin {
+
   late ExampleTabPagesFactory factory; // = ExampleTabPagesFactory();
 
   _MyPageListState() {
-    factory = ExampleTabPagesFactory(callSetState: () {
-      setState(() {});
-    });
+    factory = ExampleTabPagesFactory(
+      callSetState: () {
+        setState(() {});
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     //https://material.io/components/tabs/flutter#fixed-tabs
+
+    factory.build(vsync: this);
+
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
-      home: factory.getDefaultTabController(context, this),
+      home: factory.getDefaultTabController(context,'TabBarView'),
     );
   }
 }
 
-class ExampleTabPagesFactory extends AbsTabPagesFactory {
+class ExampleTabPagesFactory extends AbsTabPageViewFactory {
+
   ExampleTabPagesFactory({required super.callSetState});
 
   @override

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_list_view/pages_view/pages_factory.dart';
 
+import '../base/base.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -23,7 +25,7 @@ class MyPageList extends StatefulWidget {
   State<MyPageList> createState() => _MyPageListState();
 }
 
-class _MyPageListState extends State<MyPageList> {
+class _MyPageListState extends State<MyPageList> with TickerProviderStateMixin{
   late ExamplePageViewFactory factory;
 
   _MyPageListState() {
