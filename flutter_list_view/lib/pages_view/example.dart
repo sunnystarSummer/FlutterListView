@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'factory.dart';
+import 'package:flutter_list_view/pages_view/pages_factory.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,28 +24,28 @@ class MyPageList extends StatefulWidget {
 }
 
 class _MyPageListState extends State<MyPageList> {
-  ExamplePageViewFactory examplePageViewFactory = ExamplePageViewFactory();
+  late ExamplePageViewFactory factory;
 
   _MyPageListState() {
-    examplePageViewFactory.setState(() {
+    factory = ExamplePageViewFactory(callSetState: () {
       setState(() {});
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    //https://material.io/components/tabs/flutter#fixed-tabs
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
-      home: Scaffold(
-        appBar: AppBar(title: examplePageViewFactory.textViewPageTitle),
-        body: examplePageViewFactory.layout,
-      ),
+      home: factory.getRootView(),
     );
   }
 }
 
 class ExamplePageViewFactory extends AbsPageViewFactory {
+  ExamplePageViewFactory({required super.callSetState});
+
   @override
   List<AbsPage> createPages() {
     return [

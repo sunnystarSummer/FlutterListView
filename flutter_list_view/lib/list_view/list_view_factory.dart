@@ -26,7 +26,7 @@ abstract class AbsViewHolder with IBaseUI {
 
 //Factory
 abstract class AbsListViewFactory<VH extends AbsViewHolder, D>
-    extends AbsListFactory<D> with IBaseFactory {
+    extends AbsListFactory<D> {
   bool isAnim = false;
 
   // The key of the list
@@ -35,6 +35,8 @@ abstract class AbsListViewFactory<VH extends AbsViewHolder, D>
   //清單滑動當前位置
   double currentPosition = 0;
   ScrollController scrollController = ScrollController();
+
+  AbsListViewFactory({required super.callSetState});
 
   void addItem(D data) {
     int last = dataList.length;

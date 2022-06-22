@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'factory.dart';
+import 'list_view_factory.dart';
+
 
 class ExampleData {
   String label = 'default';
@@ -30,13 +31,15 @@ class ExampleViewHolder extends AbsViewHolder {
 
 class ExampleListViewFactory extends AbsListViewFactory<ExampleViewHolder, ExampleData> {
 
+  ExampleListViewFactory({required super.callSetState});
+
   @override
   void setOnBindViewHolder(
       ExampleViewHolder viewHolder, int position, ExampleData data) {
     viewHolder.setLabelInfo(data.label);
     viewHolder.setDeleteListener(() {
       removeItem(position);
-      callSetState?.call();
+      callSetState.call();
     });
   }
 

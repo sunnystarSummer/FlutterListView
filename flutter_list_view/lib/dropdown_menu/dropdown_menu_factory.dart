@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_list_view/base/base.dart';
-
-import '../list_view/factory.dart';
+import '../list_view/list_view_factory.dart';
 
 abstract class AbsMenuData<D> {
   bool isPleaseHintAtFirst = false;
   bool isDisable = false;
   String name;
   String code;
-  Function? onSelect, onTouch;
+  Function? onSelect, onTap;
 
   AbsMenuData({
     required this.name,
@@ -16,7 +15,7 @@ abstract class AbsMenuData<D> {
     this.isDisable = false,
     this.isPleaseHintAtFirst = false,
     this.onSelect,
-    this.onTouch,
+    this.onTap,
   });
 }
 
@@ -24,6 +23,12 @@ abstract class AbsMenuData<D> {
 abstract class AbsDropdownMenuFactory<VH extends AbsViewHolder,
     MD extends AbsMenuData> extends AbsListViewFactory<VH, MD> with IBaseUI {
   String code = '';
+
+  //Init GlobalKey, allows to close the DropdownButton
+  //GlobalKey dropdownKey = GlobalKey();
+  //FocusNode dropdown = FocusNode();
+
+  AbsDropdownMenuFactory({required super.callSetState});
 
   String getCurrentValue() {
     if (code.isEmpty) {
@@ -48,10 +53,21 @@ abstract class AbsDropdownMenuFactory<VH extends AbsViewHolder,
     VH viewHolder = createViewHolder();
 
     dataList.asMap().forEach((index, data) {
+      //GlobalKey dropdownKey = GlobalKey();
+
       setOnBindViewHolder(viewHolder, index, data);
       list.add(DropdownMenuItem(
+        //key: dropdownKey,
         value: data.code,
         child: viewHolder.layout,
+
+        // GestureDetector(
+        //   onTap: () {
+        //     //Navigator.pop(dropdownKey.currentContext); // Closes the dropdown
+        //     //Navigator.push(context, MaterialPageRoute(builder: (context) => BoatForm(CreationState.edit, _boat)));
+        //   },
+        //   child: viewHolder.layout,
+        // ),
       ));
     });
 
@@ -62,14 +78,21 @@ abstract class AbsDropdownMenuFactory<VH extends AbsViewHolder,
   DropdownButton get layout => generateDropdownButton(false);
 
   DropdownButton generateDropdownButton(bool isExpanded) {
+    //https://stackoverflow.com/questions/67439716/flutter-close-dropdownbutton-dropdownmenu
+
+    // GlobalKey dropdownKey = GlobalKey();
+    // FocusNode dropdown = FocusNode();
+
     return DropdownButton(
+      // key: dropdownKey,
+      // focusNode: dropdown,
       isExpanded: isExpanded,
       value: getCurrentValue(),
       items: menuItems(),
       onChanged: (value) {
         var menuData = indexMenuDataByCode(value);
 
-        menuData?.onTouch?.call();
+        menuData?.onTap?.call();
 
         if (code != value) {
           menuData?.onSelect?.call();
@@ -77,7 +100,7 @@ abstract class AbsDropdownMenuFactory<VH extends AbsViewHolder,
 
         if (menuData?.isDisable == false) {
           code = value;
-          callSetState?.call();
+          callSetState.call();
         }
       },
     );

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_list_view/dropdown_menu/factory.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
-import '../base/base.dart';
-import '../list_view/factory.dart';
+import '../list_view/list_view_factory.dart';
+import 'dropdown_menu_factory.dart';
 
 void main() {
   runApp(const MyApp());
@@ -39,13 +37,15 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  ExampleDropdownMenuFactory factory = ExampleDropdownMenuFactory();
+  late ExampleDropdownMenuFactory factory;// = ExampleDropdownMenuFactory(this);
+
+  _MyHomePageState(){
+    factory = ExampleDropdownMenuFactory(callSetState:(){
+      setState((){});
+    });
+  }
 
   Widget functionBar() {
-    //MUST
-    factory.setState(() {
-      setState(() {});
-    });
 
     List<ExampleMenuData> list = [];
 
@@ -73,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
       code: '02',
       name: '項目02(監聽onTouch)',
       isDisable: true,
-      onTouch: (){
+      onTap: (){
         //https://pub.dev/packages/fluttertoast
         Fluttertoast.showToast(
             msg: "已Touched項目02",
@@ -121,7 +121,7 @@ class ExampleMenuData extends AbsMenuData {
     super.isDisable = false,
     super.isPleaseHintAtFirst = false,
     super.onSelect,
-    super.onTouch,
+    super.onTap,
   });
 }
 
@@ -160,6 +160,9 @@ class ExampleMenuViewHolder extends AbsViewHolder {
 
 class ExampleDropdownMenuFactory
     extends AbsDropdownMenuFactory<ExampleMenuViewHolder, ExampleMenuData> {
+
+  ExampleDropdownMenuFactory({required super.callSetState});
+
   @override
   void setOnBindViewHolder(
       ExampleMenuViewHolder viewHolder, int position, ExampleMenuData data) {
@@ -172,4 +175,5 @@ class ExampleDropdownMenuFactory
 
   @override
   ExampleMenuViewHolder createViewHolder() => ExampleMenuViewHolder();
+
 }

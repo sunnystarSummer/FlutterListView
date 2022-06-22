@@ -38,10 +38,17 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
+  late ExampleListViewFactory factory;
+
+  _MyHomePageState() {
+    factory = ExampleListViewFactory(callSetState: () {
+      setState(() {});
+    });
+  }
+
   void _incrementCounter() {
     setState(() {
-
-      if (listViewFactory.dataList.isEmpty) {
+      if (factory.dataList.isEmpty) {
         _counter = 0;
       }
 
@@ -50,18 +57,16 @@ class _MyHomePageState extends State<MyHomePage> {
       ExampleData data = ExampleData();
       data.label = '$_counter';
 
-      listViewFactory.addItem(data);
-      listViewFactory.setBottom();
+      factory.addItem(data);
+      factory.setBottom();
     });
   }
-
-  ExampleListViewFactory listViewFactory = ExampleListViewFactory();
 
   Widget functionBar() {
     var button01 = ElevatedButton(
       onPressed: () {
         setState(() {
-          listViewFactory.isAnim = true;
+          factory.isAnim = true;
           SettingConfig.isGridView = false;
         });
       },
@@ -70,7 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
     var button02 = ElevatedButton(
       onPressed: () {
         setState(() {
-          listViewFactory.isAnim = false;
+          factory.isAnim = false;
           SettingConfig.isGridView = true;
         });
       },
@@ -80,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
     var button03 = ElevatedButton(
       onPressed: () {
         setState(() {
-          listViewFactory.setTop();
+          factory.setTop();
         });
       },
       child: const Text('至頂'),
@@ -89,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
     var button04 = ElevatedButton(
       onPressed: () {
         setState(() {
-          listViewFactory.setBottom();
+          factory.setBottom();
         });
       },
       child: const Text('至底'),
@@ -110,19 +115,18 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-
-    listViewFactory.isAnim = true;
+    factory.isAnim = true;
 
     //MUST
-    listViewFactory.setState(() {
-      setState(() {});
-    });
+    // listViewFactory.setState(() {
+    //   setState(() {});
+    // });
 
     //generate
-    var listView = listViewFactory.generateListView(Axis.vertical);
+    var listView = factory.generateListView(Axis.vertical);
 
     if (SettingConfig.isGridView == true) {
-      listView = listViewFactory
+      listView = factory
           .generateGridView(const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
       ));
