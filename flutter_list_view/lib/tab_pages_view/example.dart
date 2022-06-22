@@ -48,6 +48,12 @@ class _MyPageListState extends State<MyPageList> with TickerProviderStateMixin {
       home: factory.getDefaultTabController(context,'TabBarView'),
     );
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+    factory.dispose();
+  }
 }
 
 class ExampleTabPagesFactory extends AbsTabPageViewFactory {
@@ -63,6 +69,8 @@ class ExampleTabPagesFactory extends AbsTabPageViewFactory {
       Page04(),
     ];
   }
+
+
 }
 
 class Page01 extends AbsPage {

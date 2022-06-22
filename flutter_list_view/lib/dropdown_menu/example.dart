@@ -112,6 +112,12 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+    factory.dispose();
+  }
 }
 
 class ExampleMenuData extends AbsMenuData {

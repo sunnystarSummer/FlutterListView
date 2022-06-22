@@ -126,4 +126,8 @@ abstract class AbsListViewFactory<VH extends AbsViewHolder, D>
           );
         });
   }
+
+  void dispose() {
+    scrollController.dispose();
+  }
 }

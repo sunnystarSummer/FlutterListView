@@ -90,19 +90,8 @@ abstract class AbsTabPageViewFactory<P extends AbsPage>
     );
   }
 
-// @override
-// Widget get layout => TabBarView(
-//   /// [PageView.scrollDirection] defaults to [Axis.horizontal].
-//   /// Use [Axis.vertical] to scroll vertically.
-//   controller: tabController,
-//   // onPageChanged: (index) {
-//   //   if (currentPage != index) {
-//   //     currentPage = index;
-//   //     callSetState.call();
-//   //     P page = indexPage(index);
-//   //     page.onPageChanged?.call();
-//   //   }
-//   // },
-//   children: getPageLayout(),
-// );
+  @override
+  void dispose() {
+    tabController.dispose();
+  }
 }

@@ -43,6 +43,12 @@ class _MyPageListState extends State<MyPageList> with TickerProviderStateMixin{
       home: factory.getRootView(),
     );
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+    factory.dispose();
+  }
 }
 
 class ExamplePageViewFactory extends AbsPageViewFactory {
