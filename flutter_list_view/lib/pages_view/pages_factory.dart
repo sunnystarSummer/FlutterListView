@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_list_view/base/base.dart';
+import 'package:flutter_list_view/base/base_view.dart';
 import 'package:flutter_list_view/base/base_mixin.dart';
+import '../base/base_factory.dart';
 
 abstract class AbsPageViewFactory<P extends AbsPage> extends AbsFactory
     with MixinLayout {
@@ -13,6 +14,11 @@ abstract class AbsPageViewFactory<P extends AbsPage> extends AbsFactory
     P page = indexPage(currentIndex);
     page.onPageChanged?.call();
   }
+
+  // AbsPageViewFactory() {
+  //   P page = indexPage(currentIndex);
+  //   page.onPageChanged?.call();
+  // }
 
   String get _pageTitle => _currentPage.title;
 

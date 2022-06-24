@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import '../base/base.dart';
+import '../base/base_view.dart';
+import '../base/base_widget.dart';
 import 'dropdown_menu_factory.dart';
 
 void main() {
@@ -36,7 +37,7 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends AbsState<MyHomePage> {
   late ExampleDropdownMenuFactory factory;// = ExampleDropdownMenuFactory(this);
 
   _MyHomePageState(){

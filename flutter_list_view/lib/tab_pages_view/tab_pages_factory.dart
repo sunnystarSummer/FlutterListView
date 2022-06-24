@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import '../base/base.dart';
+import '../base/base_view.dart';
+import '../base/base_widget.dart';
 import '../pages_view/pages_factory.dart';
 
 abstract class AbsTabPageViewFactory<P extends AbsPage>
     extends AbsPageViewFactory<P> {
   late TabController tabController;
+
+  AbsTabPageViewFactory({required super.callSetState});
 
   build({required TickerProvider vsync}){
 
@@ -34,9 +37,9 @@ abstract class AbsTabPageViewFactory<P extends AbsPage>
     });
   }
 
-  AbsTabPageViewFactory({
-    required super.callSetState,
-  });
+  // AbsTabPageViewFactory({
+  //   required super.callSetState,
+  // });
 
   Widget getDefaultTabController(context,title) {
     var color = Theme.of(context).primaryColor;

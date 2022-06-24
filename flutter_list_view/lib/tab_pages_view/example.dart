@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_list_view/tab_pages_view/tab_pages_factory.dart';
-import '../base/base.dart';
+import '../base/base_state.dart';
+import '../base/base_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,39 +22,17 @@ class MyPageList extends StatefulWidget {
   const MyPageList({super.key});
 
   @override
-  State<MyPageList> createState() => _MyPageListState();
+  State<MyPageList> createState() => _ExamplePagesState();
 }
 
-class _MyPageListState extends State<MyPageList> with TickerProviderStateMixin {
+class _ExamplePagesState
+    extends PagesState<ExampleTabPagesFactory, MyPageList> {
 
-  late ExampleTabPagesFactory factory; // = ExampleTabPagesFactory();
-
-  _MyPageListState() {
-    factory = ExampleTabPagesFactory(
-      callSetState: () {
+  @override
+  ExampleTabPagesFactory createFactory() =>
+      ExampleTabPagesFactory(callSetState: () {
         setState(() {});
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    //https://material.io/components/tabs/flutter#fixed-tabs
-
-    factory.build(vsync: this);
-
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
-      home: factory.getDefaultTabController(context,'TabBarView'),
-    );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    factory.dispose();
-  }
+      });
 }
 
 class ExampleTabPagesFactory extends AbsTabPageViewFactory {
@@ -69,8 +48,6 @@ class ExampleTabPagesFactory extends AbsTabPageViewFactory {
       Page04(),
     ];
   }
-
-
 }
 
 class Page01 extends AbsPage {

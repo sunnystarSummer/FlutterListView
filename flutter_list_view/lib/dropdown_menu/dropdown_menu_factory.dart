@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_list_view/base/base.dart';
+import 'package:flutter_list_view/base/base_view.dart';
 import 'package:flutter_list_view/base/base_mixin.dart';
 import '../list_view/list_view_factory.dart';
 
@@ -30,6 +30,10 @@ abstract class AbsDropdownMenuFactory<VH extends AbsViewHolder,
   //FocusNode dropdown = FocusNode();
 
   AbsDropdownMenuFactory({required super.callSetState});
+
+  // PagesState(){
+  //   _factory = createFactory();
+  // }
 
   String getCurrentValue() {
     if (code.isEmpty) {

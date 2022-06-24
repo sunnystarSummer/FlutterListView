@@ -1,21 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_list_view/base/base_mixin.dart';
 
-abstract class AbsFactory {
-  Function callSetState;
-  AbsFactory({required this.callSetState});
-}
-
-abstract class AbsListFactory<D> extends AbsFactory{
-
-  AbsListFactory({required super.callSetState});
-
-  List<D> dataList = [];
-  void setList(List<D> list) {
-    dataList = list;
-  }
-}
-
 //ViewHolder
 abstract class AbsViewHolder with MixinLayout {
   Widget slideInLeft(Animation<double> animation) {

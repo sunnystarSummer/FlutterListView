@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_list_view/setting_config.dart';
+import 'base/base_state.dart';
 import 'list_view/example.dart';
 
 void main() {
@@ -35,20 +36,12 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends ListState<ExampleListViewFactory, MyHomePage> {
   int _counter = 0;
-
-  late ExampleListViewFactory factory;
-
-  _MyHomePageState() {
-    factory = ExampleListViewFactory(callSetState: () {
-      setState(() {});
-    });
-  }
 
   void _incrementCounter() {
     setState(() {
-      if (factory.dataList.isEmpty) {
+      if (listViewFactory.dataList.isEmpty) {
         _counter = 0;
       }
 
@@ -57,8 +50,8 @@ class _MyHomePageState extends State<MyHomePage> {
       ExampleData data = ExampleData();
       data.label = '$_counter';
 
-      factory.addItem(data);
-      factory.setBottom();
+      listViewFactory.addItem(data);
+      listViewFactory.setBottom();
     });
   }
 
@@ -66,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
     var button01 = ElevatedButton(
       onPressed: () {
         setState(() {
-          factory.isAnim = true;
+          listViewFactory.isAnim = true;
           SettingConfig.isGridView = false;
         });
       },
@@ -75,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
     var button02 = ElevatedButton(
       onPressed: () {
         setState(() {
-          factory.isAnim = false;
+          listViewFactory.isAnim = false;
           SettingConfig.isGridView = true;
         });
       },
@@ -85,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
     var button03 = ElevatedButton(
       onPressed: () {
         setState(() {
-          factory.setTop();
+          listViewFactory.setTop();
         });
       },
       child: const Text('至頂'),
@@ -94,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
     var button04 = ElevatedButton(
       onPressed: () {
         setState(() {
-          factory.setBottom();
+          listViewFactory.setBottom();
         });
       },
       child: const Text('至底'),
@@ -115,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    factory.isAnim = true;
+    listViewFactory.isAnim = true;
 
     //MUST
     // listViewFactory.setState(() {
@@ -123,10 +116,10 @@ class _MyHomePageState extends State<MyHomePage> {
     // });
 
     //generate
-    var listView = factory.generateListView(Axis.vertical);
+    var listView = listViewFactory.generateListView(Axis.vertical);
 
     if (SettingConfig.isGridView == true) {
-      listView = factory
+      listView = listViewFactory
           .generateGridView(const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
       ));
@@ -151,4 +144,10 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+
+  @override
+  ExampleListViewFactory createFactory() =>
+      ExampleListViewFactory(callSetState: () {
+        setState(() {});
+      });
 }

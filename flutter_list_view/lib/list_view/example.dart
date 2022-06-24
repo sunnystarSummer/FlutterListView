@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'list_view_factory.dart';
-import '../base/base.dart';
+import '../base/base_view.dart';
 
 
 class ExampleData {

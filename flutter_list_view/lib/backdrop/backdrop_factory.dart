@@ -3,7 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_list_view/base/base_mixin.dart';
 
-import '../base/base.dart';
+import '../base/base_view.dart';
+import '../base/base_factory.dart';
 
 abstract class AbsBackDropFactory<VH extends AbsViewHolder, D>
     extends AbsFactory with MixinLayout {
