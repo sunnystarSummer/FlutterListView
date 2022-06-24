@@ -23,10 +23,10 @@ class ExampleViewHolder extends AbsViewHolder {
   }
 
   @override
-  Widget get layout {
-    return Row(
-      children: [label, button],
-    );
+  Widget getLayout() {
+      return Row(
+        children: [label, button],
+      );
   }
 }
 

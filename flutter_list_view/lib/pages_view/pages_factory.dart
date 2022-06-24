@@ -1,31 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_list_view/base/base.dart';
+import 'package:flutter_list_view/base/base_mixin.dart';
 
-abstract class AbsPageViewFactory<P extends AbsPage>
-    extends AbsFactory with IBaseUI{
-  final PageController pageController = PageController();
-  int currentPage = 0;
+abstract class AbsPageViewFactory<P extends AbsPage> extends AbsFactory
+    with MixinLayout {
+  final PageController _pageController = PageController();
+  int currentIndex = 0;
 
-  Text get textViewPageTitle => Text(getPageTitle());
+  Text get textViewPageTitle => Text(_pageTitle);
 
-  AbsPageViewFactory({required super.callSetState}){
-      P page = indexPage(currentPage);
-      page.onPageChanged?.call();
+  AbsPageViewFactory({required super.callSetState}) {
+    P page = indexPage(currentIndex);
+    page.onPageChanged?.call();
   }
 
-  String getPageTitle() {
-    int index = currentPage;
-    P page = indexPage(index);
-    return page.title;
-  }
+  String get _pageTitle => _currentPage.title;
 
   List<P> createPages();
+
+  P get _currentPage => indexPage(currentIndex);
 
   List<Widget> getPageLayout() {
     List<Widget> layouts = [];
 
     for (P page in createPages()) {
-      layouts.add(page.layout);
+      layouts.add(page.getLayout());
     }
 
     return layouts;
@@ -42,27 +41,29 @@ abstract class AbsPageViewFactory<P extends AbsPage>
       appBar: AppBar(
         title: textViewPageTitle,
       ),
-      body: layout,
+      body: getLayout(),
     );
   }
 
   @override
-  Widget get layout => PageView(
-        /// [PageView.scrollDirection] defaults to [Axis.horizontal].
-        /// Use [Axis.vertical] to scroll vertically.
-        controller: pageController,
-        onPageChanged: (index) {
-          if (currentPage != index) {
-            currentPage = index;
-            callSetState.call();
-            P page = indexPage(index);
-            page.onPageChanged?.call();
-          }
-        },
-        children: getPageLayout(),
-      );
+  Widget getLayout() {
+    return PageView(
+      /// [PageView.scrollDirection] defaults to [Axis.horizontal].
+      /// Use [Axis.vertical] to scroll vertically.
+      controller: _pageController,
+      onPageChanged: (index) {
+        if (currentIndex != index) {
+          currentIndex = index;
+          callSetState.call();
+          P page = indexPage(index);
+          page.onPageChanged?.call();
+        }
+      },
+      children: getPageLayout(),
+    );
+  }
 
   void dispose() {
-    pageController.dispose();
+    _pageController.dispose();
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_list_view/base/base.dart';
+import 'package:flutter_list_view/base/base_mixin.dart';
 import '../list_view/list_view_factory.dart';
 
 abstract class AbsMenuData<D> {
@@ -21,7 +22,7 @@ abstract class AbsMenuData<D> {
 
 //Factory
 abstract class AbsDropdownMenuFactory<VH extends AbsViewHolder,
-    MD extends AbsMenuData> extends AbsListViewFactory<VH, MD> with IBaseUI {
+    MD extends AbsMenuData> extends AbsListViewFactory<VH, MD> with MixinLayout {
   String code = '';
 
   //Init GlobalKey, allows to close the DropdownButton
@@ -59,7 +60,7 @@ abstract class AbsDropdownMenuFactory<VH extends AbsViewHolder,
       list.add(DropdownMenuItem(
         //key: dropdownKey,
         value: data.code,
-        child: viewHolder.layout,
+        child: viewHolder.getLayout(),
 
         // GestureDetector(
         //   onTap: () {
@@ -75,7 +76,7 @@ abstract class AbsDropdownMenuFactory<VH extends AbsViewHolder,
   }
 
   @override
-  DropdownButton get layout => generateDropdownButton(false);
+  DropdownButton getLayout() => generateDropdownButton(false);
 
   DropdownButton generateDropdownButton(bool isExpanded) {
     //https://stackoverflow.com/questions/67439716/flutter-close-dropdownbutton-dropdownmenu

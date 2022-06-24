@@ -11,17 +11,17 @@ abstract class AbsTabPageViewFactory<P extends AbsPage>
     tabController = TabController(
       vsync: vsync,
       length: createPages().length,
-      initialIndex: currentPage,
+      initialIndex: currentIndex,
     );
 
-    P page = indexPage(currentPage);
+    P page = indexPage(currentIndex);
     page.onPageChanged?.call();
 
     //tabController.animateTo(currentPage);
 
     tabController.addListener(() {
-      currentPage = tabController.index;
-      P page = indexPage(currentPage);
+      currentIndex = tabController.index;
+      P page = indexPage(currentIndex);
       page.onPageChanged?.call();
       callSetState.call();
       if (tabController.indexIsChanging) {
@@ -36,11 +36,7 @@ abstract class AbsTabPageViewFactory<P extends AbsPage>
 
   AbsTabPageViewFactory({
     required super.callSetState,
-  }) {
-
-
-
-  }
+  });
 
   Widget getDefaultTabController(context,title) {
     var color = Theme.of(context).primaryColor;
@@ -54,7 +50,7 @@ abstract class AbsTabPageViewFactory<P extends AbsPage>
           backgroundColor: color, //Color(0xff5808e5),
           bottom: getTabLayout(tabController),
         ),
-        body: getLayout(tabController),
+        body: getLayout(),
       ),
     );
   }
@@ -81,7 +77,8 @@ abstract class AbsTabPageViewFactory<P extends AbsPage>
     );
   }
 
-  Widget getLayout(tabController) {
+  @override
+  Widget getLayout() {
     return TabBarView(
       /// [PageView.scrollDirection] defaults to [Axis.horizontal].
       /// Use [Axis.vertical] to scroll vertically.

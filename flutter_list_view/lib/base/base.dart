@@ -1,12 +1,5 @@
 import 'package:flutter/cupertino.dart';
-
-mixin IBaseUI{
-  Widget get layout;
-}
-
-mixin IDropMenuUI implements IBaseUI{
-  Widget get disableLayout;
-}
+import 'package:flutter_list_view/base/base_mixin.dart';
 
 abstract class AbsFactory {
   Function callSetState;
@@ -24,14 +17,14 @@ abstract class AbsListFactory<D> extends AbsFactory{
 }
 
 //ViewHolder
-abstract class AbsViewHolder with IBaseUI {
+abstract class AbsViewHolder with MixinLayout {
   Widget slideInLeft(Animation<double> animation) {
     return SlideTransition(
       position: Tween<Offset>(
         begin: const Offset(-1, 0),
         end: const Offset(0, 0),
       ).animate(animation),
-      child: layout,
+      child: getLayout(),
     );
   }
 
@@ -41,16 +34,12 @@ abstract class AbsViewHolder with IBaseUI {
         begin: const Offset(1, 0),
         end: const Offset(0, 0),
       ).animate(animation),
-      child: layout,
+      child: getLayout(),
     );
   }
 }
 
-mixin IPage {
-  String get title;
-}
-
-abstract class AbsPage with IBaseUI, IPage {
+abstract class AbsPage with MixinLayout, MixinPage {
   Function? onPageChanged;
 
   //取得頁面標題TextView
@@ -58,7 +47,7 @@ abstract class AbsPage with IBaseUI, IPage {
 
   @override
   //實作頁面畫面
-  Widget get layout => Center(
+  Widget getLayout() => Center(
     child: textViewPageTitle,
   );
 }

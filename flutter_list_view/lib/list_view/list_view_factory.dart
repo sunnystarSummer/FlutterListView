@@ -52,7 +52,7 @@ abstract class AbsListViewFactory<VH extends AbsViewHolder, D>
     if (isAnim) {
       return viewHolder.slideInLeft(animation);
     }
-    return viewHolder.layout;
+    return viewHolder.getLayout();
   }
 
   void setTop() {

@@ -157,7 +157,7 @@ class ExampleMenuViewHolder extends AbsViewHolder {
   }
 
   @override
-  Widget get layout {
+  Widget getLayout() {
     return Row(
       children: [label],
     );
