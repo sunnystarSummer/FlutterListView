@@ -11,8 +11,9 @@ class MyListViewScreen extends StatefulWidget {
 
   MyListViewScreen({super.key, required this.title}) {
     //螢幕固定翻轉
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    //SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     //SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft,DeviceOrientation.landscapeRight]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp,DeviceOrientation.landscapeLeft,DeviceOrientation.landscapeRight]);
   }
 
   @override
@@ -103,9 +104,7 @@ class _MyListViewScreenState extends ListState<ExampleListViewFactory, MyListVie
 
     if (SettingConfig.isGridView == true) {
       listView = listViewFactory
-          .generateGridView(const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-      ));
+          .generateGridView(portraitCont: 2,landScapeCont: 3);
     }
 
     return Scaffold(

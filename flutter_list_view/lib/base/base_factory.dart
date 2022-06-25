@@ -129,7 +129,7 @@ abstract class AbsListViewFactory<VH extends AbsViewHolder, D>
   }
 
   /// 產生網格清單
-  Widget generateGridView(var gridDelegate) {
+  Widget generateGridView({required portraitCont,required landScapeCont}) {
     //https://api.flutter.dev/flutter/widgets/GridView-class.html
     //Axis.horizontal
 
@@ -140,16 +140,33 @@ abstract class AbsListViewFactory<VH extends AbsViewHolder, D>
       currentPosition = scrollController.position.pixels;
     });
 
-    return GridView.builder(
-        gridDelegate: gridDelegate,
-        itemCount: dataList.length,
-        controller: scrollController,
-        itemBuilder: (BuildContext context, int index) {
-          return Card(
-            //color: Colors.transparent,
-            child: Center(child: addItemView(context, index)),
-          );
+    return OrientationBuilder(
+        builder: (context, orientation) {
+          return GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: orientation == Orientation.portrait ? portraitCont : landScapeCont,
+              ),
+              itemCount: dataList.length,
+              controller: scrollController,
+              itemBuilder: (BuildContext context, int index) {
+                return Card(
+                  //color: Colors.transparent,
+                  child: Center(child: addItemView(context, index)),
+                );
+              });
         });
+
+
+    // return GridView.builder(
+    //     gridDelegate: gridDelegate,
+    //     itemCount: dataList.length,
+    //     controller: scrollController,
+    //     itemBuilder: (BuildContext context, int index) {
+    //       return Card(
+    //         //color: Colors.transparent,
+    //         child: Center(child: addItemView(context, index)),
+    //       );
+    //     });
   }
 
   void dispose() {
