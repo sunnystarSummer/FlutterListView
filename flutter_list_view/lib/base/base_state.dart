@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../list_view/list_view_factory.dart';
-import '../tab_pages_view/tab_pages_factory.dart';
+import 'base_factory.dart';
 import 'base_widget.dart';
 
 
@@ -15,12 +14,12 @@ abstract class ListState<F extends AbsListViewFactory,S extends StatefulWidget> 
   }
 }
 
-abstract class PagesState<F extends AbsTabPageViewFactory,S extends StatefulWidget> extends AbsState<S>{
+abstract class TabPagesState<F extends AbsTabPageViewFactory,S extends StatefulWidget> extends AbsState<S>{
 
   late F _factory;///晚初始化
   F createFactory();
 
-  PagesState(){
+  TabPagesState(){
     _factory = createFactory();
   }
 
@@ -39,6 +38,33 @@ abstract class PagesState<F extends AbsTabPageViewFactory,S extends StatefulWidg
       theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
       home: _factory.getDefaultTabController(context, 'TabBarView'),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _factory.dispose();
+  }
+}
+
+abstract class PagesState<F extends AbsPageViewFactory,S extends StatefulWidget> extends AbsState<S>{
+
+  late F _factory;
+  F createFactory();
+
+  PagesState() {
+    _factory = createFactory();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    //https://material.io/components/tabs/flutter#fixed-tabs
+    // return MaterialApp(
+    //   title: 'Flutter Demo',
+    //   theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
+    //   home: factory.getRootView(),
+    // );
+    return _factory.getRootView();
   }
 
   @override

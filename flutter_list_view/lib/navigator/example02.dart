@@ -24,8 +24,8 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(),
       body: Center(
-        child: FlatButton(
-          child: Text('View Details'),
+        child: 	TextButton(
+          child: const Text('View Details'),
           onPressed: () {
             Navigator.pushNamed(
               context,
@@ -44,8 +44,8 @@ class DetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(),
       body: Center(
-        child: FlatButton(
-          child: Text('Pop!'),
+        child: TextButton(
+          child: const Text('Pop!'),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -53,4 +53,11 @@ class DetailScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+abstract class AbsScreen extends StatelessWidget {
+  const AbsScreen({super.key});
+
+  void onBackPressed();
+
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_list_view/setting_config.dart';
-import 'base/base_state.dart';
+import 'package:flutter_list_view/pages_view/example.dart';
+import 'package:flutter_list_view/tab_pages_view/example.dart';
+import 'dropdown_menu/example.dart';
 import 'list_view/example.dart';
 
 void main() {
@@ -15,139 +15,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(primarySwatch: Colors.amber, useMaterial3: true),
-      home: MyHomePage(title: '清單範例程式'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  //const MyHomePage({super.key, required this.title});
-  final String title;
-
-  MyHomePage({super.key, required this.title}) {
-    //螢幕固定翻轉
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    //SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft,DeviceOrientation.landscapeRight]);
-  }
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends ListState<ExampleListViewFactory, MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      if (listViewFactory.dataList.isEmpty) {
-        _counter = 0;
-      }
-
-      _counter++;
-
-      ExampleData data = ExampleData();
-      data.label = '$_counter';
-
-      listViewFactory.addItem(data);
-      listViewFactory.setBottom();
-    });
-  }
-
-  Widget functionBar() {
-    var button01 = ElevatedButton(
-      onPressed: () {
-        setState(() {
-          listViewFactory.isAnim = true;
-          SettingConfig.isGridView = false;
+        title: 'Flutter Demo',
+        theme: ThemeData(primarySwatch: Colors.amber, useMaterial3: true),
+        routes: {
+          '/': (context) => MyListViewScreen(title: '清單範例程式'),
+          '/page_list': (context) => const MyPagesScreen(),
+          '/tab_pages': (context) => const MyTabPagesScreen(),
+          '/drop_menu': (context) => MyDropMenuScreen(title: '下拉式菜單'),
         });
-      },
-      child: const Text('直列清單'),
-    );
-    var button02 = ElevatedButton(
-      onPressed: () {
-        setState(() {
-          listViewFactory.isAnim = false;
-          SettingConfig.isGridView = true;
-        });
-      },
-      child: const Text('網格清單'),
-    );
-
-    var button03 = ElevatedButton(
-      onPressed: () {
-        setState(() {
-          listViewFactory.setTop();
-        });
-      },
-      child: const Text('至頂'),
-    );
-
-    var button04 = ElevatedButton(
-      onPressed: () {
-        setState(() {
-          listViewFactory.setBottom();
-        });
-      },
-      child: const Text('至底'),
-    );
-
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          button01,
-          button02,
-          button03,
-          button04,
-        ],
-      ),
-    );
   }
-
-  @override
-  Widget build(BuildContext context) {
-    listViewFactory.isAnim = true;
-
-    //MUST
-    // listViewFactory.setState(() {
-    //   setState(() {});
-    // });
-
-    //generate
-    var listView = listViewFactory.generateListView(Axis.vertical);
-
-    if (SettingConfig.isGridView == true) {
-      listView = listViewFactory
-          .generateGridView(const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-      ));
-    }
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Column(
-        children: [
-          functionBar(),
-          Expanded(
-            child: listView,
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
-    );
-  }
-
-  @override
-  ExampleListViewFactory createFactory() =>
-      ExampleListViewFactory(callSetState: () {
-        setState(() {});
-      });
 }

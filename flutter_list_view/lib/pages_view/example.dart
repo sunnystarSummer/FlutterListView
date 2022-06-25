@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_list_view/pages_view/pages_factory.dart';
-
+import '../base/base_factory.dart';
+import '../base/base_state.dart';
 import '../base/base_view.dart';
-import '../base/base_widget.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,47 +13,28 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var pageListView = const MyPageList();
-    return pageListView;
+    return const MyPagesScreen();
   }
 }
 
-class MyPageList extends StatefulWidget {
-  const MyPageList({super.key});
+class MyPagesScreen extends StatefulWidget {
+  const MyPagesScreen({super.key});
 
   @override
-  State<MyPageList> createState() => _MyPageListState();
+  State<MyPagesScreen> createState() => _MyPagesScreenState();
 }
 
-class _MyPageListState extends AbsState<MyPageList> {
-  late ExamplePageViewFactory factory;
-
-  _MyPageListState() {
-    // factory = ExamplePageViewFactory(callSetState: () {
-    //   setState(() {});
-    // });
-  }
-
+class _MyPagesScreenState extends PagesState<ExamplePagesFactory,MyPagesScreen> {
   @override
-  Widget build(BuildContext context) {
-    //https://material.io/components/tabs/flutter#fixed-tabs
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
-      home: factory.getRootView(),
-    );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    factory.dispose();
-  }
+  ExamplePagesFactory createFactory() =>
+      ExamplePagesFactory(callSetState: () {
+        setState(() {});
+      });
 }
 
-class ExamplePageViewFactory extends AbsPageViewFactory {
+class ExamplePagesFactory extends AbsPageViewFactory {
 
-  ExamplePageViewFactory({required super.callSetState});
+  ExamplePagesFactory({required super.callSetState});
 
   @override
   List<AbsPage> createPages() {

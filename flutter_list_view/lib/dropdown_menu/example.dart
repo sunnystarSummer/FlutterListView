@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import '../base/base_factory.dart';
 import '../base/base_view.dart';
 import '../base/base_widget.dart';
-import 'dropdown_menu_factory.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,36 +18,36 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
-      home: MyHomePage(title: '下拉式菜單'),
+      home: MyDropMenuScreen(title: '下拉式菜單'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class MyDropMenuScreen extends StatefulWidget {
   //const MyHomePage({super.key, required this.title});
   final String title;
 
-  MyHomePage({super.key, required this.title}) {
+  MyDropMenuScreen({super.key, required this.title}) {
     //螢幕固定翻轉
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     //SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft,DeviceOrientation.landscapeRight]);
   }
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<MyDropMenuScreen> createState() => _MyDropMenuScreenState();
 }
 
-class _MyHomePageState extends AbsState<MyHomePage> {
-  late ExampleDropdownMenuFactory factory;// = ExampleDropdownMenuFactory(this);
+class _MyDropMenuScreenState extends AbsState<MyDropMenuScreen> {
+  late ExampleDropdownMenuFactory
+      factory; // = ExampleDropdownMenuFactory(this);
 
-  _MyHomePageState(){
-    factory = ExampleDropdownMenuFactory(callSetState:(){
-      setState((){});
+  _MyDropMenuScreenState() {
+    factory = ExampleDropdownMenuFactory(callSetState: () {
+      setState(() {});
     });
   }
 
   Widget functionBar() {
-
     List<ExampleMenuData> list = [];
 
     list.add(ExampleMenuData(
@@ -58,42 +58,39 @@ class _MyHomePageState extends AbsState<MyHomePage> {
     ));
 
     list.add(ExampleMenuData(
-      code: '00',
-      name: '項目00',
-      onSelect: (){
-        //https://pub.dev/packages/fluttertoast
-        Fluttertoast.showToast(
-          msg: "已selected項目00",
-        );
-      }
-    ));
+        code: '00',
+        name: '項目00',
+        onSelect: () {
+          //https://pub.dev/packages/fluttertoast
+          Fluttertoast.showToast(
+            msg: "已selected項目00",
+          );
+        }));
 
     list.add(ExampleMenuData(code: '01', name: '項目01'));
 
     list.add(ExampleMenuData(
-      code: '02',
-      name: '項目02(監聽onTouch)',
-      isDisable: true,
-      onTap: (){
-        //https://pub.dev/packages/fluttertoast
-        Fluttertoast.showToast(
+        code: '02',
+        name: '項目02(監聽onTouch)',
+        isDisable: true,
+        onTap: () {
+          //https://pub.dev/packages/fluttertoast
+          Fluttertoast.showToast(
             msg: "已Touched項目02",
-        );
-      }
-    ));
+          );
+        }));
 
     list.add(ExampleMenuData(code: '03', name: '項目03'));
 
     list.add(ExampleMenuData(
         code: '04',
         name: '項目04',
-        onSelect: (){
+        onSelect: () {
           //https://pub.dev/packages/fluttertoast
           Fluttertoast.showToast(
             msg: "已selected項目04",
           );
-        }
-    ));
+        }));
 
     factory.setList(list);
 
@@ -167,7 +164,6 @@ class ExampleMenuViewHolder extends AbsViewHolder {
 
 class ExampleDropdownMenuFactory
     extends AbsDropdownMenuFactory<ExampleMenuViewHolder, ExampleMenuData> {
-
   ExampleDropdownMenuFactory({required super.callSetState});
 
   @override
@@ -182,5 +178,4 @@ class ExampleDropdownMenuFactory
 
   @override
   ExampleMenuViewHolder createViewHolder() => ExampleMenuViewHolder();
-
 }

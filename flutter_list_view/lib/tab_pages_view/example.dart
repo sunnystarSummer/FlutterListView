@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_list_view/tab_pages_view/tab_pages_factory.dart';
+import '../base/base_factory.dart';
 import '../base/base_state.dart';
 import '../base/base_view.dart';
 
@@ -13,20 +13,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var pageListView = const MyPageList();
+    var pageListView = const MyTabPagesScreen();
     return pageListView;
   }
 }
 
-class MyPageList extends StatefulWidget {
-  const MyPageList({super.key});
+class MyTabPagesScreen extends StatefulWidget {
+  const MyTabPagesScreen({super.key});
 
   @override
-  State<MyPageList> createState() => _ExamplePagesState();
+  State<MyTabPagesScreen> createState() => _ExamplePagesState();
 }
 
 class _ExamplePagesState
-    extends PagesState<ExampleTabPagesFactory, MyPageList> {
+    extends TabPagesState<ExampleTabPagesFactory, MyTabPagesScreen> {
 
   @override
   ExampleTabPagesFactory createFactory() =>
