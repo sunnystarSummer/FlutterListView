@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_list_view/dropdown_menu/widget/normal.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import '../base/base_factory.dart';
-import '../base/base_view.dart';
 import '../base/base_widget.dart';
 
 void main() {
@@ -18,46 +17,45 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
-      home: MyDropMenuScreen(title: '下拉式菜單'),
+      home: MyDropdownMenuScreen(title: '下拉式菜單'),
     );
   }
 }
 
-class MyDropMenuScreen extends StatefulWidget {
+class MyDropdownMenuScreen extends StatefulWidget {
   //const MyHomePage({super.key, required this.title});
   final String title;
 
-  MyDropMenuScreen({super.key, required this.title}) {
+  MyDropdownMenuScreen({super.key, required this.title}) {
     //螢幕固定翻轉
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     //SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft,DeviceOrientation.landscapeRight]);
   }
 
   @override
-  State<MyDropMenuScreen> createState() => _MyDropMenuScreenState();
+  State<MyDropdownMenuScreen> createState() => _MyDropdownMenuScreenState();
 }
 
-class _MyDropMenuScreenState extends AbsState<MyDropMenuScreen> {
-  late ExampleDropdownMenuFactory
-      factory; // = ExampleDropdownMenuFactory(this);
+class _MyDropdownMenuScreenState extends AbsState<MyDropdownMenuScreen> {
+  late NormalDropdownMenuFactory factory;
 
-  _MyDropMenuScreenState() {
-    factory = ExampleDropdownMenuFactory(callSetState: () {
+  _MyDropdownMenuScreenState() {
+    factory = NormalDropdownMenuFactory(callSetState: () {
       setState(() {});
     });
   }
 
   Widget functionBar() {
-    List<ExampleMenuData> list = [];
+    List<NormalMenuData> list = [];
 
-    list.add(ExampleMenuData(
+    list.add(NormalMenuData(
       code: '',
       name: '請選擇項目(當選擇項目後，無法回至『提示』項目)',
       isDisable: true,
       isPleaseHintAtFirst: true,
     ));
 
-    list.add(ExampleMenuData(
+    list.add(NormalMenuData(
         code: '00',
         name: '項目00',
         onSelect: () {
@@ -67,9 +65,9 @@ class _MyDropMenuScreenState extends AbsState<MyDropMenuScreen> {
           );
         }));
 
-    list.add(ExampleMenuData(code: '01', name: '項目01'));
+    list.add(NormalMenuData(code: '01', name: '項目01'));
 
-    list.add(ExampleMenuData(
+    list.add(NormalMenuData(
         code: '02',
         name: '項目02(監聽onTouch)',
         isDisable: true,
@@ -80,9 +78,9 @@ class _MyDropMenuScreenState extends AbsState<MyDropMenuScreen> {
           );
         }));
 
-    list.add(ExampleMenuData(code: '03', name: '項目03'));
+    list.add(NormalMenuData(code: '03', name: '項目03'));
 
-    list.add(ExampleMenuData(
+    list.add(NormalMenuData(
         code: '04',
         name: '項目04',
         onSelect: () {
@@ -116,66 +114,4 @@ class _MyDropMenuScreenState extends AbsState<MyDropMenuScreen> {
     super.dispose();
     factory.dispose();
   }
-}
-
-class ExampleMenuData extends AbsMenuData {
-  ExampleMenuData({
-    required super.name,
-    required super.code,
-    super.isDisable = false,
-    super.isPleaseHintAtFirst = false,
-    super.onSelect,
-    super.onTap,
-  });
-}
-
-class ExampleMenuViewHolder extends AbsViewHolder {
-  late Text label;
-
-  setPleaseHint(String text) {
-    label = Text(
-      text,
-      style: const TextStyle(
-        color: Colors.redAccent,
-      ),
-    );
-  }
-
-  setLabelInfo(bool isDisable, String text) {
-    if (isDisable) {
-      label = Text(
-        text,
-        style: const TextStyle(
-          color: Colors.grey,
-        ),
-      );
-    } else {
-      label = Text(text);
-    }
-  }
-
-  @override
-  Widget getLayout() {
-    return Row(
-      children: [label],
-    );
-  }
-}
-
-class ExampleDropdownMenuFactory
-    extends AbsDropdownMenuFactory<ExampleMenuViewHolder, ExampleMenuData> {
-  ExampleDropdownMenuFactory({required super.callSetState});
-
-  @override
-  void setOnBindViewHolder(
-      ExampleMenuViewHolder viewHolder, int position, ExampleMenuData data) {
-    if (data.isPleaseHintAtFirst) {
-      viewHolder.setPleaseHint(data.name);
-    } else {
-      viewHolder.setLabelInfo(data.isDisable, data.name);
-    }
-  }
-
-  @override
-  ExampleMenuViewHolder createViewHolder() => ExampleMenuViewHolder();
 }

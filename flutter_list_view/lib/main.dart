@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_list_view/pages_view/example.dart';
 import 'package:flutter_list_view/tab_pages_view/example.dart';
 import 'dropdown_menu/example.dart';
+import 'dropdown_menu/form/customer_form.dart';
 import 'list_view/example.dart';
 
 void main() {
@@ -16,12 +17,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Flutter Demo',
-        theme: ThemeData(primarySwatch: Colors.amber, useMaterial3: true),
+        theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
         routes: {
-          '/': (context) => MyListViewScreen(title: '清單範例程式'),
+          '/': (context) => MyCustomerFormScreen(title: '客戶清單程式'),//MyListViewScreen(title: '清單範例程式'),
           '/page_list': (context) => const MyPagesScreen(),
           '/tab_pages': (context) => const MyTabPagesScreen(),
-          '/drop_menu': (context) => MyDropMenuScreen(title: '下拉式菜單'),
+          '/drop_menu': (context) => MyDropdownMenuScreen(title: '下拉式菜單'),
         });
   }
 }

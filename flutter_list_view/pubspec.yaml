@@ -37,6 +37,8 @@ dependencies:
 
   fluttertoast: ^8.0.9
 
+  chopper: any
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -50,6 +52,9 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
+
+  build_runner: ^1.12.2
+  chopper_generator: any
 
 # The following section is specific to Flutter packages.
 flutter:

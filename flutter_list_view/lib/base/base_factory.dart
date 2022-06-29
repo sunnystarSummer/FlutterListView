@@ -6,22 +6,23 @@ import 'base_view.dart';
 abstract class AbsFactory {
   ///更新畫面，需要使用此Function
   Function callSetState;
-  AbsFactory({required this.callSetState});
-  //AbsFactory();
-  // void setCallSetState(callSetState){
-  //   this.callSetState = callSetState;
-  // }
 
-  // getSelf(){
-  //   return this;
-  // }
+  AbsFactory({required this.callSetState});
+//AbsFactory();
+// void setCallSetState(callSetState){
+//   this.callSetState = callSetState;
+// }
+
+// getSelf(){
+//   return this;
+// }
 }
 
-abstract class AbsListFactory<D> extends AbsFactory{
-
+abstract class AbsListFactory<D> extends AbsFactory {
   AbsListFactory({required super.callSetState});
 
   List<D> dataList = [];
+
   void setList(List<D> list) {
     dataList = list;
   }
@@ -63,6 +64,10 @@ abstract class AbsListViewFactory<VH extends AbsViewHolder, D>
     dataList.removeAt(index);
   }
 
+  D getItem(int index) {
+    return dataList[index];
+  }
+
   //產生ViewHolder
   VH createViewHolder();
 
@@ -70,9 +75,11 @@ abstract class AbsListViewFactory<VH extends AbsViewHolder, D>
 
   /// 新增項目畫面
   Widget addItemView(context, index, {animation}) {
-    VH viewHolder = createViewHolder();
     D data = dataList[index];
+
+    VH viewHolder = createViewHolder();
     setOnBindViewHolder(viewHolder, index, data);
+    Widget layout = viewHolder.getLayout();
 
     if (isAnim) {
       return viewHolder.slideInLeft(animation);
@@ -129,7 +136,7 @@ abstract class AbsListViewFactory<VH extends AbsViewHolder, D>
   }
 
   /// 產生網格清單
-  Widget generateGridView({required portraitCont,required landScapeCont}) {
+  Widget generateGridView({required portraitCont, required landScapeCont}) {
     //https://api.flutter.dev/flutter/widgets/GridView-class.html
     //Axis.horizontal
 
@@ -140,22 +147,22 @@ abstract class AbsListViewFactory<VH extends AbsViewHolder, D>
       currentPosition = scrollController.position.pixels;
     });
 
-    return OrientationBuilder(
-        builder: (context, orientation) {
-          return GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: orientation == Orientation.portrait ? portraitCont : landScapeCont,
-              ),
-              itemCount: dataList.length,
-              controller: scrollController,
-              itemBuilder: (BuildContext context, int index) {
-                return Card(
-                  //color: Colors.transparent,
-                  child: Center(child: addItemView(context, index)),
-                );
-              });
-        });
-
+    return OrientationBuilder(builder: (context, orientation) {
+      return GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: orientation == Orientation.portrait
+                ? portraitCont
+                : landScapeCont,
+          ),
+          itemCount: dataList.length,
+          controller: scrollController,
+          itemBuilder: (BuildContext context, int index) {
+            return Card(
+              //color: Colors.transparent,
+              child: Center(child: addItemView(context, index)),
+            );
+          });
+    });
 
     // return GridView.builder(
     //     gridDelegate: gridDelegate,
@@ -251,8 +258,7 @@ abstract class AbsTabPageViewFactory<P extends AbsPage>
 
   AbsTabPageViewFactory({required super.callSetState});
 
-  build({required TickerProvider vsync}){
-
+  build({required TickerProvider vsync}) {
     tabController = TabController(
       vsync: vsync,
       length: createPages().length,
@@ -283,14 +289,14 @@ abstract class AbsTabPageViewFactory<P extends AbsPage>
   //   required super.callSetState,
   // });
 
-  Widget getDefaultTabController(context,title) {
+  Widget getDefaultTabController(context, title) {
     var color = Theme.of(context).primaryColor;
 
     return DefaultTabController(
       length: createPages().length,
       child: Scaffold(
         appBar: AppBar(
-          title: textViewPageTitle,//Text(title),
+          title: textViewPageTitle, //Text(title),
           automaticallyImplyLeading: false,
           backgroundColor: color, //Color(0xff5808e5),
           bottom: getTabLayout(tabController),
@@ -340,7 +346,8 @@ abstract class AbsTabPageViewFactory<P extends AbsPage>
 
 /// 下拉式菜單工廠
 abstract class AbsDropdownMenuFactory<VH extends AbsViewHolder,
-MD extends AbsMenuData> extends AbsListViewFactory<VH, MD> with MixinLayout {
+        MD extends AbsMenuData> extends AbsListViewFactory<VH, MD>
+    with MixinLayout {
   String code = '';
 
   //Init GlobalKey, allows to close the DropdownButton
@@ -352,6 +359,10 @@ MD extends AbsMenuData> extends AbsListViewFactory<VH, MD> with MixinLayout {
   // PagesState(){
   //   _factory = createFactory();
   // }
+
+  void setCurrentValue(String code) {
+    this.code = code;
+  }
 
   String getCurrentValue() {
     if (code.isEmpty) {
