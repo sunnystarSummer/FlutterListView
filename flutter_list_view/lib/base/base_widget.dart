@@ -7,3 +7,7 @@ abstract class AbsStatefulWidget extends StatefulWidget {
 abstract class AbsState<T extends StatefulWidget> extends State<T> with TickerProviderStateMixin {
 
 }
+
+abstract class AbsState02<T extends StatefulWidget> extends State<T> with SingleTickerProviderStateMixin {
+
+}

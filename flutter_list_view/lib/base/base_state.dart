@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../backdrop/backdrop_factory.dart';
 import 'base_factory.dart';
 import 'base_widget.dart';
 
@@ -71,5 +72,21 @@ abstract class PagesState<F extends AbsPageViewFactory,S extends StatefulWidget>
   void dispose() {
     super.dispose();
     _factory.dispose();
+  }
+}
+
+abstract class BackDropState<F extends AbsBackDropFactory,S extends StatefulWidget> extends AbsState<S>{
+
+  late F backDropFactory;
+  F createFactory();
+
+  BackDropState() {
+    backDropFactory = createFactory();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    backDropFactory.dispose();
   }
 }

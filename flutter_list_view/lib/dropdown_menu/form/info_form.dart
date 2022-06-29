@@ -16,7 +16,7 @@ class InfoForm extends AbsViewHolder {
   //   required this.body,
   // });
 
-  Widget _titleBar() {
+  Widget _titleBar(bool isBodyVisible) {
     //8,42
     BorderRadius borderRadius;
     if (isBodyVisible == false) {
@@ -30,43 +30,18 @@ class InfoForm extends AbsViewHolder {
       );
     }
 
-    IconButton wrapButton = IconButton(
-      iconSize: 36,
-      icon: isBodyVisible
-          ? const Icon(Icons.arrow_downward)
-          : const Icon(Icons.arrow_forward),
-      color: Colors.white,
-      onPressed: (){
-        onWrapPressed?.call();
-      },
-    );
-
     //https://www.geeksforgeeks.org/align-widget-in-flutter/
     //不能用Stack
     var bar = SizedBox(
       width: double.infinity,
       height: 42,
-      child:
-          // Stack(children: [
-          Material(
+      child: Material(
         color: Colors.blue,
         borderRadius: borderRadius,
       ),
-      // Align(alignment: Alignment.centerRight,
-      //   child: wrapButton,)
-      // ],
-      // ),
     );
 
-    return Stack(
-      children: [
-        bar,
-        // Align(
-        //   alignment: Alignment.centerRight,
-        //   child: wrapButton,
-        // ),
-      ],
-    );
+    return bar;
   }
 
   Widget _body() {
@@ -97,35 +72,66 @@ class InfoForm extends AbsViewHolder {
     );
   }
 
-  void setOnWrapPressed(bool isVisible,Function onWrapPressed) {
+  void setOnWrapPressed(Function onWrapPressed) {
     this.onWrapPressed = () {
-      isBodyVisible = !isVisible;
-      Fluttertoast.showToast(
-        msg: "isBodyVisible:$isBodyVisible",
-      );
       onWrapPressed.call();
     };
+  }
+
+  Widget _wrapButton(bool isBodyVisible) {
+    IconButton wrapButton = IconButton(
+      iconSize: 36,
+      icon: isBodyVisible
+          ? const Icon(Icons.arrow_downward)
+          : const Icon(Icons.arrow_forward),
+      color: Colors.white,
+      onPressed: () {
+        onWrapPressed?.call();
+      },
+    );
+    return Align(
+      alignment: Alignment.centerRight,
+      child: wrapButton,
+    );
   }
 
   @override
   Widget getLayout() {
     if (isBodyVisible) {
-      return BasePadding.paddingAll08(Column(
-        children: [
-          _titleBar(),
-          _body(),
-        ],
-      ));
+      return BasePadding.paddingAll08(
+        Stack(
+          children: [
+            Column(children: [
+              _titleBar(isBodyVisible),
+              _body(),
+            ]),
+            _wrapButton(isBodyVisible),
+          ],
+        ),
+      );
     } else {
-      return BasePadding.paddingAll08(Column(
-        children: [
-          _titleBar(),
-        ],
-      ));
+      return BasePadding.paddingAll08(
+        Stack(
+          children: [
+            Column(children: [
+              _titleBar(isBodyVisible),
+            ]),
+            _wrapButton(isBodyVisible),
+          ],
+        ),
+      );
     }
+  }
+
+  void setBodyVisible(bool isBodyVisible){
+    this.isBodyVisible = isBodyVisible;
   }
 
   void setBody(Widget body) {
     this.body = body;
   }
+}
+
+class MixinInfo{
+  bool isInfoBodyVisible = true;
 }

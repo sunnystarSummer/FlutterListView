@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_list_view/backdrop/example.dart';
 import 'package:flutter_list_view/pages_view/example.dart';
 import 'package:flutter_list_view/tab_pages_view/example.dart';
 import 'dropdown_menu/example.dart';
@@ -18,8 +19,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
+        debugShowCheckedModeBanner: false,
         routes: {
-          '/': (context) => MyCustomerFormScreen(title: '客戶清單程式'),//MyListViewScreen(title: '清單範例程式'),
+          '/': (context) => const MyBackDropScreen(),
+          //'/': (context) => MyCustomerFormScreen(title: '客戶清單程式'),//MyListViewScreen(title: '清單範例程式'),
           '/page_list': (context) => const MyPagesScreen(),
           '/tab_pages': (context) => const MyTabPagesScreen(),
           '/drop_menu': (context) => MyDropdownMenuScreen(title: '下拉式菜單'),

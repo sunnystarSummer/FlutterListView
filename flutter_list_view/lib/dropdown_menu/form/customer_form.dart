@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_list_view/base/base_padding.dart';
 import 'package:flutter_list_view/base/base_view.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../base/base_factory.dart';
 import '../../base/base_state.dart';
@@ -144,11 +143,10 @@ class _MyCustomerFormScreenState
       });
 }
 
-class CustomerData {
+class CustomerData with MixinInfo {
   String typeCode = '';
   String name = '';
   String uniCode = '';
-  bool isVisible = true;
   bool isNameReadOnly = false; //true;
   bool isUniCodeReadOnly = false; //true;
 }
@@ -168,14 +166,14 @@ class CustomerFormViewHolder extends AbsViewHolder {
 
   //late InfoForm infoForm;
 
-  bool isVisible = true;
+  //bool isVisible = true;
+  late CustomerData data;
 
-  void setInfoFormOnWrapPressed(bool isVisible,Function onWrapPressed) {
-    this.isVisible = isVisible;
+  void setInfoFormOnWrapPressed(CustomerData data, Function onWrapPressed) {
+    this.data = data;
     this.onWrapPressed = onWrapPressed;
 
     //infoForm.setOnWrapPressed(callSetState);
-
   }
 
   void initialTypeSelector(
@@ -324,12 +322,13 @@ class CustomerFormViewHolder extends AbsViewHolder {
       ],
     );
     var infoForm = InfoForm(
-      // body: body,
-      //onWrapPressed: callSetState,
-    );
+        // body: body,
+        //onWrapPressed: callSetState,
+        );
 
     infoForm.setBody(body);
-    infoForm.setOnWrapPressed(isVisible,onWrapPressed);
+    infoForm.setBodyVisible(data.isInfoBodyVisible);
+    infoForm.setOnWrapPressed(onWrapPressed);
 
     return infoForm.getLayout();
   }
@@ -342,11 +341,8 @@ class CustomerFormListViewFactory
   @override
   void setOnBindViewHolder(
       CustomerFormViewHolder viewHolder, int position, CustomerData data) {
-
-    bool isVisible = !data.isVisible;
-
-
-    viewHolder.setInfoFormOnWrapPressed(isVisible,(){
+    viewHolder.setInfoFormOnWrapPressed(data, () {
+      data.isInfoBodyVisible = !data.isInfoBodyVisible;
       callSetState.call();
     });
 
