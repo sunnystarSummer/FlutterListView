@@ -4,21 +4,39 @@ import 'base_mixin.dart';
 import 'base_view.dart';
 
 abstract class AbsFactory {
+  late BuildContext buildContext;
+
   ///更新畫面，需要使用此Function
   Function callSetState;
 
-  AbsFactory({required this.callSetState});
-//AbsFactory();
-// void setCallSetState(callSetState){
-//   this.callSetState = callSetState;
-// }
+  bool isEditable = true;
 
-// getSelf(){
-//   return this;
-// }
+  AbsFactory({required this.callSetState});
+
+  void setBuildContext(BuildContext context) {
+    buildContext = context;
+  }
+
+  BuildContext getBuildContext() {
+    return buildContext;
+  }
+}
+
+abstract class AbsFactory02 {
+  late BuildContext buildContext;
+
+  void setBuildContext(BuildContext context) {
+    buildContext = context;
+  }
+
+  BuildContext getBuildContext() {
+    return buildContext;
+  }
 }
 
 abstract class AbsListFactory<D> extends AbsFactory {
+  int selectedPosition = -1;
+
   AbsListFactory({required super.callSetState});
 
   List<D> dataList = [];
@@ -54,7 +72,7 @@ abstract class AbsListViewFactory<VH extends AbsViewHolder, D>
     D data = dataList[index];
     VH viewHolder = createViewHolder();
 
-    setOnBindViewHolder(viewHolder, index, data);
+    setOnBindViewHolder(viewHolder, index);
 
     if (isAnim == true) {
       keyList.currentState!.removeItem(
@@ -71,14 +89,15 @@ abstract class AbsListViewFactory<VH extends AbsViewHolder, D>
   //產生ViewHolder
   VH createViewHolder();
 
-  void setOnBindViewHolder(VH viewHolder, int position, D data);
+  //void setOnBindViewHolder(VH viewHolder, int position,D data);
+  void setOnBindViewHolder(VH viewHolder, int position);
 
   /// 新增項目畫面
   Widget addItemView(context, index, {animation}) {
     D data = dataList[index];
 
     VH viewHolder = createViewHolder();
-    setOnBindViewHolder(viewHolder, index, data);
+    setOnBindViewHolder(viewHolder, index);
     Widget layout = viewHolder.getLayout();
 
     if (isAnim) {
@@ -389,7 +408,7 @@ abstract class AbsDropdownMenuFactory<VH extends AbsViewHolder,
     dataList.asMap().forEach((index, data) {
       //GlobalKey dropdownKey = GlobalKey();
 
-      setOnBindViewHolder(viewHolder, index, data);
+      setOnBindViewHolder(viewHolder, index);
       list.add(DropdownMenuItem(
         //key: dropdownKey,
         value: data.code,
@@ -423,20 +442,25 @@ abstract class AbsDropdownMenuFactory<VH extends AbsViewHolder,
       isExpanded: isExpanded,
       value: getCurrentValue(),
       items: menuItems(),
-      onChanged: (value) {
-        var menuData = indexMenuDataByCode(value);
 
-        menuData?.onTap?.call();
+      //2022-06-30_Jason
+      //增加可不可編輯模式
+      onChanged: isEditable == false
+          ? null
+          : (value) {
+              var menuData = indexMenuDataByCode(value);
 
-        if (code != value) {
-          menuData?.onSelect?.call();
-        }
+              menuData?.onTap?.call();
 
-        if (menuData?.isDisable == false) {
-          code = value;
-          callSetState.call();
-        }
-      },
+              if (code != value) {
+                menuData?.onSelect?.call();
+              }
+
+              if (menuData?.isDisable == false) {
+                code = value;
+                callSetState.call();
+              }
+            },
     );
   }
 }

@@ -1,13 +1,50 @@
+import 'package:backdrop/backdrop.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_list_view/base/base_padding.dart';
 import 'package:flutter_list_view/base/base_view.dart';
+import 'package:flutter_list_view/util/dialog_util.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 
 import '../../base/base_factory.dart';
 import '../../base/base_state.dart';
 import '../../setting_config.dart';
 import '../widget/normal.dart';
 import 'info_form.dart';
+
+void main() {
+  runApp(const MyApp());
+
+  //https://pub.dev/packages/provider
+  // runApp(
+  //   MultiProvider(
+  //     providers: [
+  //       ChangeNotifierProvider(create: (_) => CustomerFormListViewFactory()),
+  //       //ChangeNotifierProvider(create: (context) => CartModel()),
+  //       //Provider(create: (context) => SomeOtherClass()),
+  //     ],
+  //     child: const MyApp(),
+  //   ),
+  // );
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
+        debugShowCheckedModeBanner: false,
+        routes: {
+          '/': (context) => MyCustomerFormScreen(title: '客戶清單程式'),
+        });
+  }
+}
 
 class MyCustomerFormScreen extends StatefulWidget {
   //const MyHomePage({super.key, required this.title});
@@ -44,6 +81,7 @@ class _MyCustomerFormScreenState
       //data.label = '$_counter';
 
       listViewFactory.addItem(data);
+      listViewFactory.selectedPosition = -1;
       listViewFactory.setBottom();
     });
   }
@@ -108,6 +146,8 @@ class _MyCustomerFormScreenState
     //   setState(() {});
     // });
 
+    listViewFactory.setBuildContext(context);
+
     //generate
     var listView = listViewFactory.generateListView(Axis.vertical);
 
@@ -145,10 +185,15 @@ class _MyCustomerFormScreenState
 
 class CustomerData with MixinInfo {
   String typeCode = '';
-  String name = '';
-  String uniCode = '';
+  //String name = '';
+  //String uniCode = '';
   bool isNameReadOnly = false; //true;
   bool isUniCodeReadOnly = false; //true;
+
+  TextEditingController textEditingControllerName =
+      TextEditingController(text: '');
+  TextEditingController textEditingControllerUniCode =
+      TextEditingController(text: '');
 }
 
 class CustomerFormViewHolder extends AbsViewHolder {
@@ -156,18 +201,15 @@ class CustomerFormViewHolder extends AbsViewHolder {
   late TextFormField editTextName;
   late TextFormField editTextUniCode;
 
-  //TextEditingController textEditingControllerName = TextEditingController();
-  //TextEditingController textEditingControllerUniCode = TextEditingController();
-
   late IconButton editNameButton;
   late IconButton editUniCodeButton;
   late IconButton deleteButton;
+  late IconButton confirmButton;
   late Function onWrapPressed;
 
-  //late InfoForm infoForm;
-
-  //bool isVisible = true;
   late CustomerData data;
+  late bool isEditable = true;
+  late bool isReadOnly = !isEditable; //false;
 
   void setInfoFormOnWrapPressed(CustomerData data, Function onWrapPressed) {
     this.data = data;
@@ -176,9 +218,11 @@ class CustomerFormViewHolder extends AbsViewHolder {
     //infoForm.setOnWrapPressed(callSetState);
   }
 
+  /// 初始客戶型態
   void initialTypeSelector(
       {required Function callSetState, required String initialCode}) {
     factory = NormalDropdownMenuFactory(callSetState: callSetState);
+    factory.isEditable = isEditable;
 
     List<NormalMenuData> list = [];
 
@@ -200,22 +244,12 @@ class CustomerFormViewHolder extends AbsViewHolder {
   void initialName(
       {required onChanged,
       required onEditPressed,
-      required isReadOnly,
-      required String initialValue}) {
+      required TextEditingController controller}) {
     //https://api.flutter.dev/flutter/material/TextFormField-class.html
 
-    editNameButton = IconButton(
-      iconSize: 36,
-      icon: const Icon(Icons.edit),
-      color: Colors.blue,
-      onPressed: onEditPressed,
-    );
-
     editTextName = TextFormField(
-      //controller: textEditingControllerName,
-      // enabled: isReadOnly,
+      controller: controller,
       readOnly: isReadOnly,
-      initialValue: initialValue,
       decoration: const InputDecoration(
         border: UnderlineInputBorder(),
         labelText: '請輸入姓名/公司名稱',
@@ -225,6 +259,7 @@ class CustomerFormViewHolder extends AbsViewHolder {
       validator: (String? value) {
         //return (value != null && value.contains('@')) ? 'Do not use the @ char.' : null;
       },
+      onTap: _onTapListener,
     );
   }
 
@@ -232,8 +267,7 @@ class CustomerFormViewHolder extends AbsViewHolder {
   void initialUniCode(
       {required onChanged,
       required onEditPressed,
-      required isReadOnly,
-      required String initialValue}) {
+      required TextEditingController controller}) {
     //https://api.flutter.dev/flutter/material/TextFormField-class.html
 
     editUniCodeButton = IconButton(
@@ -244,103 +278,207 @@ class CustomerFormViewHolder extends AbsViewHolder {
     );
 
     editTextUniCode = TextFormField(
-      //controller: textEditingControllerUniCode,
-      // enabled: isReadOnly,
+      controller: controller,
       readOnly: isReadOnly,
-      initialValue: initialValue,
       decoration: const InputDecoration(
         border: UnderlineInputBorder(),
-        labelText: '請輸入姓名/公司名稱',
+        labelText: '請輸入ID/統編',
       ),
       onChanged: onChanged,
       onSaved: onChanged,
       validator: (String? value) {
         //return (value != null && value.contains('@')) ? 'Do not use the @ char.' : null;
       },
+      onTap: _onTapListener,
     );
   }
 
   void initialDeleteButton({required onPressed}) {
     deleteButton = IconButton(
       iconSize: 36,
-      icon: const Icon(Icons.remove_circle),
-      color: Colors.redAccent,
+      //icon: const Icon(Icons.remove_circle),
+      icon: const Icon(Icons.delete),
+      color: Colors.red,
       onPressed: onPressed,
     );
   }
 
-  Widget _infoTableLayout() {
-    //https://api.flutter.dev/flutter/widgets/Table-class.html
-    Table table = Table(
-      //border: TableBorder.all(),
-      columnWidths: const <int, TableColumnWidth>{
-        0: IntrinsicColumnWidth(),
-        1: FlexColumnWidth(),
-        // 2: IntrinsicColumnWidth(),
-        //2: FixedColumnWidth(64),
-      },
-      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-      children: <TableRow>[
-        TableRow(children: <Widget>[
-          BasePadding.paddingAll04(const Text('客戶類型：')),
-          BasePadding.paddingAll04(factory.generateDropdownButton(true)),
-          // BasePadding.paddingAll04(deleteButton),
-        ]),
-        TableRow(children: <Widget>[
-          BasePadding.paddingAll04(const Text('ID/統編：')),
-          //Padding(
-          //padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-          //child:
-          BasePadding.paddingAll04(editTextUniCode),
-          // BasePadding.paddingAll04(editUniCodeButton),
-          // ),
-        ]),
-        TableRow(children: <Widget>[
-          BasePadding.paddingAll04(const Text('姓名/公司名稱：')),
-          BasePadding.paddingAll04(editTextName),
-          // BasePadding.paddingAll04(editNameButton),
-        ]),
-      ],
+  void initialConfirmButton({required onPressed}) {
+    confirmButton = IconButton(
+      iconSize: 36,
+      //icon: const Icon(Icons.remove_circle),
+      icon: const Icon(Icons.check_circle),
+      color: Colors.green,
+      onPressed: onPressed,
     );
+  }
+
+  Widget infoTableLayout({required isEditMode}) {
+    //https://api.flutter.dev/flutter/widgets/Table-class.html
+    Table table;
+    if (isEditMode) {
+      table = Table(
+        //border: TableBorder.all(),
+        columnWidths: const <int, TableColumnWidth>{
+          0: IntrinsicColumnWidth(),
+          1: FlexColumnWidth(),
+          //2: IntrinsicColumnWidth(),
+          //2: FixedColumnWidth(64),
+        },
+        defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+        children: <TableRow>[
+          TableRow(children: <Widget>[
+            BasePadding.paddingAll04(const Text('客戶類型：')),
+            BasePadding.paddingAll04(factory.generateDropdownButton(true)),
+          ]),
+          TableRow(children: <Widget>[
+            BasePadding.paddingAll04(const Text('ID/統編：')),
+            BasePadding.paddingAll04(editTextUniCode),
+          ]),
+          TableRow(children: <Widget>[
+            BasePadding.paddingAll04(const Text('姓名/公司名稱：')),
+            BasePadding.paddingAll04(editTextName),
+          ]),
+        ],
+      );
+    } else {
+      table = Table(
+        //border: TableBorder.all(),
+        columnWidths: const <int, TableColumnWidth>{
+          0: IntrinsicColumnWidth(),
+          1: FlexColumnWidth(),
+        },
+        defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+        children: <TableRow>[
+          TableRow(children: <Widget>[
+            BasePadding.paddingAll04(const Text('客戶類型：')),
+            BasePadding.paddingAll04(factory.generateDropdownButton(true)),
+          ]),
+          TableRow(children: <Widget>[
+            BasePadding.paddingAll04(const Text('ID/統編：')),
+            BasePadding.paddingAll04(editTextUniCode),
+          ]),
+          TableRow(children: <Widget>[
+            BasePadding.paddingAll04(const Text('姓名/公司名稱：')),
+            BasePadding.paddingAll04(editTextName),
+          ]),
+        ],
+      );
+    }
 
     return BasePadding.paddingAll08(table);
   }
 
+  dynamic _onTapListener;
+
+  /// 選擇項目
+  void setOnTapListener({required onTap}) {
+    _onTapListener = onTap;
+  }
+
   @override
   Widget getLayout() {
-    var body = Stack(
+
+    Widget body = Stack(
       children: [
         Column(
           children: [
-            _infoTableLayout(),
+            infoTableLayout(isEditMode: isEditable),
           ],
-        ),
-        Container(
-          alignment: Alignment.topRight,
-          child: deleteButton,
         ),
       ],
     );
-    var infoForm = InfoForm(
-        // body: body,
-        //onWrapPressed: callSetState,
-        );
+
+    BorderRadius borderRadius = const BorderRadius.only(
+      topLeft: Radius.circular(8),
+      topRight: Radius.circular(8),
+      bottomLeft: Radius.circular(8),
+      bottomRight: Radius.circular(8),
+    );
+
+    Widget option = BasePadding.paddingAll04(SizedBox(
+      child: Container(
+          //margin: const EdgeInsets.all(15.0),
+          padding: const EdgeInsets.all(4.0),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.blue),
+            borderRadius: borderRadius,
+            color: Colors.white,
+            // boxShadow: const [
+            //   BoxShadow(color: Colors.green, spreadRadius: 3),
+            // ],
+          ),
+          child: Column(
+            children: [deleteButton, confirmButton],
+          )),
+    ));
+
+    // if(isEditable){
+    //   body = Row(children: [body,option],);
+    // }
+
+    var infoForm = InfoForm();
 
     infoForm.setBody(body);
     infoForm.setBodyVisible(data.isInfoBodyVisible);
     infoForm.setOnWrapPressed(onWrapPressed);
 
-    return infoForm.getLayout();
+    Table table;
+    if (isEditable) {
+      table = Table(
+        //border: TableBorder.all(),
+        columnWidths: const <int, TableColumnWidth>{
+          0: FlexColumnWidth(),
+          1: IntrinsicColumnWidth(),
+        },
+        defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+        children: <TableRow>[
+          TableRow(children: <Widget>[
+            infoForm.getLayout(),
+            option,
+          ]),
+        ],
+      );
+    } else {
+      table = Table(
+        //border: TableBorder.all(),
+        columnWidths: const <int, TableColumnWidth>{
+          0: FlexColumnWidth(),
+          //1: IntrinsicColumnWidth(),
+        },
+        defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+        children: <TableRow>[
+          TableRow(children: <Widget>[
+            infoForm.getLayout(),
+            //option,
+          ]),
+        ],
+      );
+    }
+
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: _onTapListener,
+      child: table, //infoForm.getLayout(),
+    );
   }
 }
 
 class CustomerFormListViewFactory
-    extends AbsListViewFactory<CustomerFormViewHolder, CustomerData> {
+    extends AbsListViewFactory<CustomerFormViewHolder, CustomerData>
+    with ChangeNotifier {
   CustomerFormListViewFactory({required super.callSetState});
 
   @override
-  void setOnBindViewHolder(
-      CustomerFormViewHolder viewHolder, int position, CustomerData data) {
+  void setOnBindViewHolder(CustomerFormViewHolder viewHolder, int position) {
+    CustomerData data = dataList[position];
+
+    if (selectedPosition == position) {
+      viewHolder.isEditable = true;
+    } else {
+      viewHolder.isEditable = false;
+    }
+
     viewHolder.setInfoFormOnWrapPressed(data, () {
       data.isInfoBodyVisible = !data.isInfoBodyVisible;
       callSetState.call();
@@ -354,47 +492,49 @@ class CustomerFormListViewFactory
         });
 
     //https://stackoverflow.com/questions/68305886/flutter-text-editing-controller-listview-builder
+
+    String onChangeTextName = data.textEditingControllerName.text;
     viewHolder.initialName(
-      isReadOnly: false, //true,//data.isNameReadOnly,
-      initialValue: data.name,
+      controller: data.textEditingControllerName,
       onChanged: (text) {
-        getItem(position).name = text;
+        //getItem(position).name = text;
+        onChangeTextName = text;
       },
       onEditPressed: () {
-        // data.isNameReadOnly = !data.isNameReadOnly;
-        // if (data.isNameReadOnly) {
-        //   Fluttertoast.showToast(
-        //     msg: "isNameReadOnly",
-        //   );
-        // }
-
-        data.name = 'name_$position';
         callSetState.call();
       },
     );
 
+    String onChangeTextUniCode = data.textEditingControllerUniCode.text;
     viewHolder.initialUniCode(
-      isReadOnly: false, //true,//data.isUniCodeReadOnly,
-      initialValue: data.uniCode,
+      controller: data.textEditingControllerUniCode,
       onChanged: (text) {
-        getItem(position).uniCode = text;
+        //getItem(position).uniCode = text;
+        onChangeTextUniCode = text;
       },
       onEditPressed: () {
-        // data.isUniCodeReadOnly = !data.isUniCodeReadOnly;
-        // if (data.isUniCodeReadOnly) {
-        //   Fluttertoast.showToast(
-        //     msg: "isUniCodeReadOnly",
-        //   );
-        // }
-        data.uniCode = 'uniCode_$position';
         callSetState.call();
       },
     );
 
     viewHolder.initialDeleteButton(onPressed: () {
       removeItem(position);
-      //List<CustomerData> clonedDataList = List.from(dataList);
-      //dataList = clonedDataList;
+      selectedPosition = -1;
+      callSetState.call();
+    });
+
+    viewHolder.initialConfirmButton(onPressed: () {
+      selectedPosition = -1;
+
+      data.textEditingControllerName.text = onChangeTextName;
+      data.textEditingControllerUniCode.text = onChangeTextUniCode;
+
+      callSetState.call();
+    });
+
+    viewHolder.setOnTapListener(onTap: () {
+      selectedPosition = position;
+      Fluttertoast.showToast(msg: 'selected $position');
       callSetState.call();
     });
   }

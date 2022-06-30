@@ -166,8 +166,9 @@ class ExampleListViewFactory extends AbsListViewFactory<ExampleViewHolder, Examp
   ExampleListViewFactory({required super.callSetState});
 
   @override
-  void setOnBindViewHolder(
-      ExampleViewHolder viewHolder, int position, ExampleData data) {
+  void setOnBindViewHolder(ExampleViewHolder viewHolder, int position) {
+    ExampleData data = dataList[position];
+
     viewHolder.setLabelInfo(data.label);
     viewHolder.setDeleteListener(() {
       removeItem(position);

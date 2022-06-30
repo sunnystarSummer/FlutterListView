@@ -2,7 +2,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_list_view/base/base_mixin.dart';
 
 //ViewHolder
-abstract class AbsViewHolder with MixinLayout {
+abstract class AbsViewHolder<D> with MixinLayout {
+
+  // late D statusData;
+  // void setStatusData(D data){
+  //   statusData = data;
+  // }
+  // D getStatusData(){
+  //   return statusData;
+  // }
+
   Widget slideInLeft(Animation<double> animation) {
     return SlideTransition(
       position: Tween<Offset>(

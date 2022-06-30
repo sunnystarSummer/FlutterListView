@@ -130,6 +130,10 @@ class InfoForm extends AbsViewHolder {
   void setBody(Widget body) {
     this.body = body;
   }
+
+  // void setOption(List<Widget> options) {
+  //   this.option
+  // }
 }
 
 class MixinInfo{

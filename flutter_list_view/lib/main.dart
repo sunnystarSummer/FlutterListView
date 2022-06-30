@@ -21,8 +21,8 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
         debugShowCheckedModeBanner: false,
         routes: {
-          '/': (context) => const MyBackDropScreen(),
-          //'/': (context) => MyCustomerFormScreen(title: '客戶清單程式'),//MyListViewScreen(title: '清單範例程式'),
+          //'/': (context) => const MyTabPagesScreen(),
+          '/': (context) => MyCustomerFormScreen(title: '客戶清單程式'),//MyListViewScreen(title: '清單範例程式'),
           '/page_list': (context) => const MyPagesScreen(),
           '/tab_pages': (context) => const MyTabPagesScreen(),
           '/drop_menu': (context) => MyDropdownMenuScreen(title: '下拉式菜單'),

@@ -51,8 +51,9 @@ class NormalDropdownMenuFactory
   NormalDropdownMenuFactory({required super.callSetState});
 
   @override
-  void setOnBindViewHolder(
-      NormalMenuViewHolder viewHolder, int position, NormalMenuData data) {
+  void setOnBindViewHolder(NormalMenuViewHolder viewHolder, int position) {
+    NormalMenuData data = dataList[position];
+
     if (data.isPleaseHintAtFirst) {
       viewHolder.setPleaseHint(data.name);
     } else {
