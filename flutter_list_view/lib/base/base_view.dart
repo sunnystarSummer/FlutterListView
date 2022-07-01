@@ -4,13 +4,13 @@ import 'package:flutter_list_view/base/base_mixin.dart';
 //ViewHolder
 abstract class AbsViewHolder<D> with MixinLayout {
 
-  // late D statusData;
-  // void setStatusData(D data){
-  //   statusData = data;
-  // }
-  // D getStatusData(){
-  //   return statusData;
-  // }
+  late D statusData;
+  void setData(D data){
+    statusData = data;
+  }
+  D getData(){
+    return statusData;
+  }
 
   Widget slideInLeft(Animation<double> animation) {
     return SlideTransition(

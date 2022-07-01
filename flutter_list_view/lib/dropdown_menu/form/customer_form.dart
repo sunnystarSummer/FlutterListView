@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_list_view/base/base_padding.dart';
 import 'package:flutter_list_view/base/base_view.dart';
+import 'package:flutter_list_view/dropdown_menu/form/paperwork.dart';
 import 'package:flutter_list_view/util/dialog_util.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -36,9 +37,13 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    //SettingConfig.appThemeData = Theme.of(context);
+    SettingConfig.themePrimaryColor = Colors.blue;
+
     return MaterialApp(
         title: 'Flutter Demo',
-        theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
+        theme: ThemeData(
+            primarySwatch: SettingConfig.themePrimaryColor, useMaterial3: true),
         debugShowCheckedModeBanner: false,
         routes: {
           '/': (context) => MyCustomerFormScreen(title: '客戶清單程式'),
@@ -185,6 +190,7 @@ class _MyCustomerFormScreenState
 
 class CustomerData with MixinInfo {
   String typeCode = '';
+
   //String name = '';
   //String uniCode = '';
   bool isNameReadOnly = false; //true;
@@ -196,7 +202,7 @@ class CustomerData with MixinInfo {
       TextEditingController(text: '');
 }
 
-class CustomerFormViewHolder extends AbsViewHolder {
+class CustomerFormViewHolder<CustomerData> extends AbsViewHolder {
   late NormalDropdownMenuFactory factory;
   late TextFormField editTextName;
   late TextFormField editTextUniCode;
@@ -207,15 +213,11 @@ class CustomerFormViewHolder extends AbsViewHolder {
   late IconButton confirmButton;
   late Function onWrapPressed;
 
-  late CustomerData data;
   late bool isEditable = true;
   late bool isReadOnly = !isEditable; //false;
 
-  void setInfoFormOnWrapPressed(CustomerData data, Function onWrapPressed) {
-    this.data = data;
+  void setInfoFormOnWrapPressed(Function onWrapPressed) {
     this.onWrapPressed = onWrapPressed;
-
-    //infoForm.setOnWrapPressed(callSetState);
   }
 
   /// 初始客戶型態
@@ -273,7 +275,7 @@ class CustomerFormViewHolder extends AbsViewHolder {
     editUniCodeButton = IconButton(
       iconSize: 36,
       icon: const Icon(Icons.edit),
-      color: Colors.blue,
+      color: SettingConfig.themePrimaryColor,
       onPressed: onEditPressed,
     );
 
@@ -378,7 +380,6 @@ class CustomerFormViewHolder extends AbsViewHolder {
 
   @override
   Widget getLayout() {
-
     Widget body = Stack(
       children: [
         Column(
@@ -396,51 +397,48 @@ class CustomerFormViewHolder extends AbsViewHolder {
       bottomRight: Radius.circular(8),
     );
 
+    //橫向選項，上方為選項欄，下方為資訊欄
+    bool isRowOption = true;
+
     Widget option = BasePadding.paddingAll04(SizedBox(
       child: Container(
           //margin: const EdgeInsets.all(15.0),
-          padding: const EdgeInsets.all(4.0),
+          //padding: const EdgeInsets.all(4.0),
+
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.blue),
+            border: Border.all(color: SettingConfig.themePrimaryColor),
             borderRadius: borderRadius,
             color: Colors.white,
-            // boxShadow: const [
-            //   BoxShadow(color: Colors.green, spreadRadius: 3),
-            // ],
           ),
-          child: Column(
-            children: [deleteButton, confirmButton],
-          )),
+          child: isRowOption
+              ? Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [deleteButton, confirmButton],
+                )
+              : Column(
+                  children: [deleteButton, confirmButton],
+                )),
     ));
 
     // if(isEditable){
     //   body = Row(children: [body,option],);
     // }
 
+    body = Column(children: [
+      body,
+      getContentByType(),
+    ]);
+
     var infoForm = InfoForm();
 
     infoForm.setBody(body);
-    infoForm.setBodyVisible(data.isInfoBodyVisible);
+    infoForm.setBodyVisible(getData().isInfoBodyVisible);
     infoForm.setOnWrapPressed(onWrapPressed);
 
-    Table table;
+    Widget infoFrameBody;
+
     if (isEditable) {
-      table = Table(
-        //border: TableBorder.all(),
-        columnWidths: const <int, TableColumnWidth>{
-          0: FlexColumnWidth(),
-          1: IntrinsicColumnWidth(),
-        },
-        defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-        children: <TableRow>[
-          TableRow(children: <Widget>[
-            infoForm.getLayout(),
-            option,
-          ]),
-        ],
-      );
-    } else {
-      table = Table(
+      Table table = Table(
         //border: TableBorder.all(),
         columnWidths: const <int, TableColumnWidth>{
           0: FlexColumnWidth(),
@@ -454,13 +452,139 @@ class CustomerFormViewHolder extends AbsViewHolder {
           ]),
         ],
       );
+
+      // if (isRowOption) {
+      //   Table table = Table(
+      //     //border: TableBorder.all(),
+      //     columnWidths: const <int, TableColumnWidth>{
+      //       0: FlexColumnWidth(),
+      //     },
+      //     defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+      //     children: <TableRow>[
+      //       TableRow(children: <Widget>[
+      //         option,
+      //       ]),
+      //       TableRow(children: <Widget>[
+      //         infoForm.getLayout(),
+      //       ]),
+      //     ],
+      //   );
+      // }
+
+      infoFrameBody = Stack(
+        children: [
+          table,
+          Container(
+            alignment: Alignment.centerRight,
+            child: option,
+          ),
+        ],
+      );
+    } else {
+      Table table = Table(
+        //border: TableBorder.all(),
+        columnWidths: const <int, TableColumnWidth>{
+          0: FlexColumnWidth(),
+        },
+        defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+        children: <TableRow>[
+          TableRow(children: <Widget>[
+            infoForm.getLayout(),
+          ]),
+        ],
+      );
+
+      infoFrameBody = table;
     }
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: _onTapListener,
-      child: table, //infoForm.getLayout(),
+      child: infoFrameBody, //infoForm.getLayout(),
     );
+  }
+
+  Widget getContentByType() {
+    //證件照
+
+    //分隔線
+    var divider = BasePadding.paddingAll08(Divider(
+      color: SettingConfig.themePrimaryColor,
+      thickness: 1,
+    ));
+
+    switch (factory.code) {
+      case '01':
+        return Column(children: [
+          divider,
+          IDCard().getCardWithTitle(title: '身分證正面'),
+          divider,
+          IDCard().getCardWithTitle(title: '身分證反面'),
+          divider,
+          IDCard().getCardWithTitle(title: '第二證件'),
+        ]);
+      case '02':
+        //return const Text('公X戶');
+
+        List<PhotoData> list = [];
+
+        list.add(PhotoData());
+        list.add(PhotoData());
+        list.add(PhotoData());
+        list.add(PhotoData());
+        list.add(PhotoData());
+        list.add(PhotoData());
+
+        list.add(PhotoData());
+        list.add(PhotoData());
+        list.add(PhotoData());
+        list.add(PhotoData());
+        list.add(PhotoData());
+        list.add(PhotoData());
+
+
+        //https://stackoverflow.com/questions/45270900/how-to-implement-nested-listview-in-flutter
+
+        return Column(children: [
+          divider,
+          //const Text('公X戶'),
+          //list,
+          // BasePadding.paddingAll08(ListView.builder(
+          //     scrollDirection: Axis.vertical,
+          //     itemCount: 1,
+          //     physics: const ClampingScrollPhysics(),
+          //     shrinkWrap: true,
+          //     itemBuilder: (BuildContext context, int index) {
+          //       return PhotoViewHolder().getLayout();
+          //     })),
+          GalleryViewHolder().getCategoryRows(list,title: '公X資料'),
+        ]);
+      case '03':
+        //return const Text('外XX士');
+
+        return Column(children: [
+          divider,
+          IDCard().getCardWithTitle(title: '身分證正面'),
+          divider,
+          IDCard().getCardWithTitle(title: '身分證反面'),
+          divider,
+          IDCard().getCardWithTitle(title: '第二證件'),
+        ]);
+    }
+
+    return Container();
+  }
+
+  late Function callSetState;
+
+  void initialCallSetState(Function callSetState) {
+    this.callSetState = callSetState;
+  }
+
+  late BuildContext buildContext;
+
+  void initialBuildContext(BuildContext buildContext) {
+    this.buildContext = buildContext;
   }
 }
 
@@ -479,7 +603,15 @@ class CustomerFormListViewFactory
       viewHolder.isEditable = false;
     }
 
-    viewHolder.setInfoFormOnWrapPressed(data, () {
+    viewHolder.setData(data);
+
+    viewHolder.initialBuildContext(buildContext);
+
+    viewHolder.initialCallSetState(() {
+      callSetState.call();
+    });
+
+    viewHolder.setInfoFormOnWrapPressed(() {
       data.isInfoBodyVisible = !data.isInfoBodyVisible;
       callSetState.call();
     });
@@ -533,7 +665,12 @@ class CustomerFormListViewFactory
     });
 
     viewHolder.setOnTapListener(onTap: () {
-      selectedPosition = position;
+      if (selectedPosition != position) {
+        selectedPosition = position;
+      } else {
+        selectedPosition = -1;
+      }
+
       Fluttertoast.showToast(msg: 'selected $position');
       callSetState.call();
     });
